@@ -1,0 +1,1 @@
+Directory for the Pico CMSIS port that can be found at https://gitlab.com/khockuba/cmsis-pi-pico
