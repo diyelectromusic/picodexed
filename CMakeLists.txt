@@ -41,6 +41,8 @@ target_include_directories(picodexed PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src
 target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib tinyusb_device tinyusb_board pico_audio_i2s)
 
 target_compile_definitions(picodexed PRIVATE
+    PICO_AUDIO_I2S_MONO_OUTPUT=1
+    PICO_AUDIO_I2S_MONO_INPUT=1
 	USE_AUDIO_I2S=1
 )
 

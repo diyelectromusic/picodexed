@@ -11,7 +11,7 @@
 
 typedef int16_t (*buffer_callback)(void);
 
-struct audio_buffer_pool *init_audio(uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bclk, uint8_t pio_sm=0, uint8_t dma_ch=0) {
+struct audio_buffer_pool *init_audio(uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bclk, uint8_t pio_sm=0, uint8_t dma_ch=0, uint16_t num_samples=SAMPLES_PER_BUFFER) {
   static audio_format_t audio_format = {
     .sample_freq = sample_rate,
     .format = AUDIO_BUFFER_FORMAT_PCM_S16,
@@ -26,7 +26,7 @@ struct audio_buffer_pool *init_audio(uint32_t sample_rate, uint8_t pin_data, uin
   struct audio_buffer_pool *producer_pool = audio_new_producer_pool(
     &producer_format,
     3,
-    SAMPLES_PER_BUFFER
+    num_samples
   );
 
   const struct audio_format *output_format;
