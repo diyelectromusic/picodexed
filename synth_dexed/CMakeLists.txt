@@ -1,10 +1,3 @@
-set (CMSIS_DIR ${CMAKE_CURRENT_LIST_DIR}/../cmsis/cmsis-pi-pico/CMSIS)
-set (CMSIS_CORE_INCLUDE_DIR ${CMSIS_DIR}/Core/Include)
-set (CMSIS_DSP_INCLUDE_DIR ${CMSIS_DIR}/DSP/Include)
-set (CMSIS_DSP_PRIVATE_INCLUDE_DIR ${CMSIS_DIR}/DSP/PrivateInclude)
-set (CMSIS_DSP_COMPUTELIB_INCLUDE_DIR ${CMSIS_DIR}/DSP/ComputeLibrary/Include)
-set (CMSIS_DSP_SOURCE_DIR ${CMSIS_DIR}/DSP/Source)
-set (CMSIS_DSP_COMPUTELIB_SRC_DIR ${CMSIS_DIR}/DSP/ComputeLibrary/Source)
 
 add_library(synth_dexed
        ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src/PluginFx.cpp 
@@ -22,15 +15,11 @@ add_library(synth_dexed
        ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src/EngineMkI.cpp
        ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src/EngineOpl.cpp
        ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src/EngineMsfa.cpp
+       ${CMAKE_CURRENT_LIST_DIR}/extra_maths.c
 )
 
 target_include_directories(synth_dexed INTERFACE ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src
 PRIVATE ${CMAKE_CURRENT_LIST_DIR}
-PUBLIC
-	${CMSIS_CORE_INCLUDE_DIR}
-	${CMSIS_DSP_INCLUDE_DIR}
-	${CMSIS_DSP_PRIVATE_INCLUDE_DIR}
-	${CMSIS_DSP_COMPUTELIB_INCLUDE_DIR}
 )
 
 target_link_libraries(synth_dexed PUBLIC pico_stdlib)

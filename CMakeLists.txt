@@ -16,12 +16,6 @@ set (CMSIS_DSP_COMPUTELIB_SRC_DIR ${CMSIS_DIR}/DSP/ComputeLibrary/Source)
 target_sources(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/usb_descriptors.c
-    ${CMSIS_DSP_SOURCE_DIR}/SupportFunctions/SupportFunctions.c
-    ${CMSIS_DSP_SOURCE_DIR}/BasicMathFunctions/BasicMathFunctions.c
-    ${CMSIS_DSP_SOURCE_DIR}/FastMathFunctions/FastMathFunctions.c
-    ${CMSIS_DSP_SOURCE_DIR}/FilteringFunctions/FilteringFunctions.c
-    ${CMSIS_DSP_SOURCE_DIR}/CommonTables/CommonTables.c
-    ${CMSIS_DSP_COMPUTELIB_SRC_DIR}/arm_cl_tables.c
 )
 
 add_subdirectory(synth_dexed)
@@ -30,10 +24,6 @@ add_subdirectory(synth_dexed)
 target_include_directories(picodexed PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src
     ${CMAKE_CURRENT_LIST_DIR}/synth_dexed
     ${CMAKE_CURRENT_LIST_DIR}/synth_dexed/Synth_Dexed/src
-	${CMSIS_CORE_INCLUDE_DIR}
-	${CMSIS_DSP_INCLUDE_DIR}
-	${CMSIS_DSP_PRIVATE_INCLUDE_DIR}
-	${CMSIS_DSP_COMPUTELIB_INCLUDE_DIR}
 )
 
 # In addition to pico_stdlib required for common PicoSDK functionality, add dependency on tinyusb_device

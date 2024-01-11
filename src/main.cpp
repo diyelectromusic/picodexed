@@ -3,6 +3,7 @@
 #include "dexedadaptor.h"
 
 #define DEXED_SAMPLE_RATE 24000
+#define POLYPHONY 4
 
 #define PICO_AUDIO_PACK_I2S_DATA 9
 #define PICO_AUDIO_PACK_I2S_BCLK 10
@@ -10,8 +11,10 @@
 #define LED_PIN PICO_DEFAULT_LED_PIN
 #define TIMING_PIN 2
 
-CDexedAdapter dexed(1,DEXED_SAMPLE_RATE);
+CDexedAdapter dexed(POLYPHONY,DEXED_SAMPLE_RATE);
 
+#define MIDI_NOTES 12
+int midiNotes[MIDI_NOTES] = {48, 52, 55, 60, 64, 67, 72, 76, 79, 84, 88, 91};
 
 uint8_t sDefaultVoice[156] =	// Brass 1
 {
@@ -97,6 +100,19 @@ void ledOff (void) {
   gpio_put(LED_PIN, 0);
 }
 
+void midiChordOn () {
+assert(POLYPHONE < MIDI_NOTES);
+  for (int i=0; i<POLYPHONY; i++) {
+    dexed.keydown(midiNotes[i], 100);
+  }
+}
+
+void midiChordOff () {
+  for (int i=0; i<POLYPHONY; i++) {
+    dexed.keyup(midiNotes[i]);
+  }
+}
+
 int main(void) {
   ledInit();
   timingInit();
@@ -124,11 +140,11 @@ int main(void) {
     if (millitime > millicount) {
       if (isOn) {
         ledOff();
-        dexed.keyup(48);
+        midiChordOff();
       }
       else {
         ledOn();
-        dexed.keydown(48, 100);
+        midiChordOn();
       }
       isOn = !isOn;
       millicount = millis() + 1000;
