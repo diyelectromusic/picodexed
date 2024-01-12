@@ -1,15 +1,18 @@
 #include "pico/stdlib.h"
 #include "pico_audio.hpp"
+#include "arm_math.h"
 #include "dexedadaptor.h"
+#include "pico_perf.h"
 
 #define DEXED_SAMPLE_RATE 24000
 #define POLYPHONY 4
+#define DEXED_NUM_SAMPLES 256
+#define PICO_NUM_SAMPLES  256
 
 #define PICO_AUDIO_PACK_I2S_DATA 9
 #define PICO_AUDIO_PACK_I2S_BCLK 10
 
 #define LED_PIN PICO_DEFAULT_LED_PIN
-#define TIMING_PIN 2
 
 CDexedAdapter dexed(POLYPHONY,DEXED_SAMPLE_RATE);
 
@@ -40,11 +43,10 @@ uint8_t sDefaultVoice[156] =	// Brass 1
 			 32,  49,  32,  63
 };
 
-#define NUM_SAMPLES 128
-int16_t SampleBuffer[NUM_SAMPLES];
+int16_t SampleBuffer[DEXED_NUM_SAMPLES];
 unsigned SampleIndex=0;
 void initSampleBuffer (void) {
-  dexed.getSamples(SampleBuffer, NUM_SAMPLES);
+  dexed.getSamples(SampleBuffer, DEXED_NUM_SAMPLES);
 /*  for (int i=0; i<NUM_SAMPLES/2; i++) {
     SampleBuffer[i] = 32000;
     SampleBuffer[i+NUM_SAMPLES/2] = -32000;
@@ -53,9 +55,10 @@ void initSampleBuffer (void) {
 }
 
 int16_t getNextSample (void) {
-  if (SampleIndex >= NUM_SAMPLES) {
+  if (SampleIndex >= DEXED_NUM_SAMPLES) {
     // Refil the buffer and reset
-    dexed.getSamples(SampleBuffer, NUM_SAMPLES);
+    timingToggle(4);
+    dexed.getSamples(SampleBuffer, DEXED_NUM_SAMPLES);
     SampleIndex = 0;
   }
   return SampleBuffer[SampleIndex++];
@@ -67,24 +70,6 @@ void fillSampleBuffer(struct audio_buffer_pool *ap) {
   dexed.getSamples(samples, buffer->max_sample_count);
   buffer->sample_count = buffer->max_sample_count;
   give_audio_buffer(ap, buffer);
-}
-
-int timingPinValue;
-void timingInit (void) {
-  gpio_init(TIMING_PIN);
-  gpio_set_dir(TIMING_PIN, GPIO_OUT);
-  timingPinValue = 0;
-  gpio_put(TIMING_PIN, 0);
-}
-
-void timingToggle (void) {
-  if (timingPinValue) {
-    gpio_put(TIMING_PIN, 0);
-    timingPinValue = 0;
-  } else {
-    gpio_put(TIMING_PIN, 1);
-    timingPinValue = 1;
-  }
 }
 
 void ledInit (void) {
@@ -115,7 +100,11 @@ void midiChordOff () {
 
 int main(void) {
   ledInit();
-  timingInit();
+  // Use GPIO 2-5 for timing signals for testing
+  timingInit(2);
+  timingInit(3);
+  timingInit(4);
+  timingInit(5);
   for (int i=0; i<5; i++) {
     ledOn();
     sleep_ms(250);
@@ -127,7 +116,7 @@ int main(void) {
 
   initSampleBuffer();
   
-  struct audio_buffer_pool *ap = init_audio(DEXED_SAMPLE_RATE, PICO_AUDIO_PACK_I2S_DATA, PICO_AUDIO_PACK_I2S_BCLK, 0, 0, NUM_SAMPLES);
+  struct audio_buffer_pool *ap = init_audio(DEXED_SAMPLE_RATE, PICO_AUDIO_PACK_I2S_DATA, PICO_AUDIO_PACK_I2S_BCLK, 0, 0, PICO_NUM_SAMPLES);
   
   //dexed.loadInitVoice();
   dexed.loadVoiceParameters(sDefaultVoice);
@@ -135,22 +124,26 @@ int main(void) {
   uint32_t millicount=0;
   bool isOn = false;
   while (1) {
-    timingToggle();
+    timingToggle(2);
     uint32_t millitime = millis();
     if (millitime > millicount) {
       if (isOn) {
         ledOff();
         midiChordOff();
+        millicount = millis() + 4000;
       }
       else {
         ledOn();
         midiChordOn();
+        millicount = millis() + 1000;
       }
       isOn = !isOn;
-      millicount = millis() + 1000;
     }
 
-    fillSampleBuffer(ap);
+    timingOn(3);
+    update_buffer(ap, getNextSample);
+//    fillSampleBuffer(ap);
+    timingOff(3);
   }
   
   return 0;

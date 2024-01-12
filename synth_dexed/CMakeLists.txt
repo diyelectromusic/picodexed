@@ -15,11 +15,11 @@ add_library(synth_dexed
        ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src/EngineMkI.cpp
        ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src/EngineOpl.cpp
        ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src/EngineMsfa.cpp
-       ${CMAKE_CURRENT_LIST_DIR}/extra_maths.c
+       ${CMAKE_CURRENT_LIST_DIR}/arm_math.c
 )
 
 target_include_directories(synth_dexed INTERFACE ${CMAKE_CURRENT_LIST_DIR}/Synth_Dexed/src
-PRIVATE ${CMAKE_CURRENT_LIST_DIR}
+	PRIVATE ${CMAKE_CURRENT_LIST_DIR}
 )
 
 target_link_libraries(synth_dexed PUBLIC pico_stdlib)

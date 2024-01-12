@@ -5,16 +5,9 @@ project(picodexed)
 pico_sdk_init()
 add_executable(picodexed)
 
-set (CMSIS_DIR ${CMAKE_CURRENT_LIST_DIR}/cmsis/cmsis-pi-pico/CMSIS)
-set (CMSIS_CORE_INCLUDE_DIR ${CMSIS_DIR}/Core/Include)
-set (CMSIS_DSP_INCLUDE_DIR ${CMSIS_DIR}/DSP/Include)
-set (CMSIS_DSP_PRIVATE_INCLUDE_DIR ${CMSIS_DIR}/DSP/PrivateInclude)
-set (CMSIS_DSP_COMPUTELIB_INCLUDE_DIR ${CMSIS_DIR}/DSP/ComputeLibrary/Include)
-set (CMSIS_DSP_SOURCE_DIR ${CMSIS_DIR}/DSP/Source)
-set (CMSIS_DSP_COMPUTELIB_SRC_DIR ${CMSIS_DIR}/DSP/ComputeLibrary/Source)
-
 target_sources(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/pico_perf.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/usb_descriptors.c
 )
 
@@ -22,8 +15,8 @@ add_subdirectory(synth_dexed)
 
 # Make sure TinyUSB can find tusb_config.h
 target_include_directories(picodexed PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src
-    ${CMAKE_CURRENT_LIST_DIR}/synth_dexed
     ${CMAKE_CURRENT_LIST_DIR}/synth_dexed/Synth_Dexed/src
+    ${CMAKE_CURRENT_LIST_DIR}/synth_dexed
 )
 
 # In addition to pico_stdlib required for common PicoSDK functionality, add dependency on tinyusb_device
