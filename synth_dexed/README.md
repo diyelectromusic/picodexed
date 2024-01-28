@@ -4,6 +4,9 @@ This provides a few things that Synth_Dexed requires that aren't provided by def
 
 The following files need to be updated:
 
+src/dexed.cpp:
+See the file "dexed.diff" in this repository for the changes required to dexed.cpp.
+
 src/dexed.h:
 ```
 --- a/src/dexed.h
@@ -29,47 +32,6 @@ src/dexed.h:
  };
  
  #endif
-```
-
-src/dexed.cpp
-```
---- a/src/dexed.cpp
-+++ b/src/dexed.cpp
-@@ -80,7 +80,9 @@ Dexed::Dexed(uint8_t maxnotes, int rate)
-   setEngineType(MKI);
- 
- #ifndef TEENSYDUINO
-+#ifndef RASPBERRYPI_PICO
-   compressor = new Compressor(samplerate);
-+#endif
- #endif
-   use_compressor = false;
- }
-@@ -231,9 +233,11 @@ void Dexed::getSamples(float32_t* buffer, uint16_t n_samples)
-   fx.process(buffer, n_samples); // Needed for fx.Gain()!!!
- 
- #ifndef TEENSYDUINO
-+#ifndef RASPBERRYPI_PICO
-   if (use_compressor == true)
-     compressor->doCompression(buffer, n_samples);
- #endif
-+#endif
- }
- 
- void Dexed::getSamples(int16_t* buffer, uint16_t n_samples)
-@@ -1754,6 +1758,7 @@ void Dexed::setVelocityScale(uint8_t setup = MIDI_VELOCITY_SCALING_OFF)
- }
- 
- #ifndef TEENSYDUINO
-+#ifndef RASPBERRYPI_PICO
- void Dexed::setCompressor(bool enable_compressor)
- {
-   use_compressor = enable_compressor;
-@@ -1814,3 +1819,4 @@ float32_t Dexed::getCompressionRatio(void)
-   return (compressor->getCompressionRatio());
- }
- #endif
-+#endif
 ```
 
 src/compressor.h
