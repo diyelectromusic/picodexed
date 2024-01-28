@@ -1,0 +1,114 @@
+diff --git a/src/dexed.cpp b/src/dexed.cpp
+index cf501f8..7e6d241 100644
+--- a/src/dexed.cpp
++++ b/src/dexed.cpp
+@@ -37,6 +37,7 @@
+ #include "PluginFx.h"
+ #include "porta.h"
+ #include "compressor.h"
++#include "../../../src/pico_perf.h"
+ 
+ Dexed::Dexed(uint8_t maxnotes, int rate)
+ {
+@@ -80,7 +81,9 @@ Dexed::Dexed(uint8_t maxnotes, int rate)
+   setEngineType(MKI);
+ 
+ #ifndef TEENSYDUINO
++#ifndef RASPBERRYPI_PICO
+   compressor = new Compressor(samplerate);
++#endif
+ #endif
+   use_compressor = false;
+ }
+@@ -228,20 +231,77 @@ void Dexed::getSamples(float32_t* buffer, uint16_t n_samples)
+     }
+   }
+ 
+-  fx.process(buffer, n_samples); // Needed for fx.Gain()!!!
++//  fx.process(buffer, n_samples); // Needed for fx.Gain()!!!
+ 
+ #ifndef TEENSYDUINO
++#ifndef RASPBERRYPI_PICO
+   if (use_compressor == true)
+     compressor->doCompression(buffer, n_samples);
+ #endif
++#endif
++	timingOff(3);
+ }
+ 
+ void Dexed::getSamples(int16_t* buffer, uint16_t n_samples)
+ {
++#if 0
+   float32_t tmp[n_samples];
+ 
+   getSamples(tmp, n_samples);
+   arm_float_to_q15(tmp, (q15_t*)buffer, n_samples);
++#else
++	timingOn(3);
++  if (refreshVoice)
++  {
++    for (uint8_t i = 0; i < max_notes; i++)
++    {
++      if ( voices[i].live )
++        voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity, voices[i].porta, &controllers);
++    }
++    lfo.reset(data + 137);
++    refreshVoice = false;
++  }
++
++//  arm_fill_f32(0, buffer, n_samples);
++  for (uint16_t i = 0; i < n_samples; ++i)
++  {
++    buffer[i] = 0;
++  }
++
++  for (uint16_t i = 0; i < n_samples; i += _N_)
++  {
++    AlignedBuf<int32_t, _N_> audiobuf;
++
++    for (uint8_t j = 0; j < _N_; ++j)
++    {
++      audiobuf.get()[j] = 0;
++    }
++
++    int32_t lfovalue = lfo.getsample();
++    int32_t lfodelay = lfo.getdelay();
++
++    for (uint8_t note = 0; note < max_notes; note++)
++    {
++	timingOn(4);
++      if (voices[note].live)
++      {
++        voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
++
++        for (uint8_t j = 0; j < _N_; ++j)
++        {
++          int16_t tmp = audiobuf.get()[j] >> 16;
++          buffer[i + j] += tmp;
++          audiobuf.get()[j] = 0;
++        }
++      }
++	timingOff(4);
++    }
++  }
++
++//  fx.process(buffer, n_samples); // Needed for fx.Gain()!!!
++
++	timingOff(3);
++#endif
+ }
+ 
+ void Dexed::keydown(int16_t pitch, uint8_t velo) {
+@@ -1754,6 +1814,7 @@ void Dexed::setVelocityScale(uint8_t setup = MIDI_VELOCITY_SCALING_OFF)
+ }
+ 
+ #ifndef TEENSYDUINO
++#ifndef RASPBERRYPI_PICO
+ void Dexed::setCompressor(bool enable_compressor)
+ {
+   use_compressor = enable_compressor;
+@@ -1814,3 +1875,4 @@ float32_t Dexed::getCompressionRatio(void)
+   return (compressor->getCompressionRatio());
+ }
+ #endif
++#endif
