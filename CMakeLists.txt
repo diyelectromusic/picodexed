@@ -8,6 +8,11 @@ add_executable(picodexed)
 target_sources(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/pico_perf.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/mididevice.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/picodexed.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/serialmidi.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/sounddevice.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/usbmidi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/usb_descriptors.c
 )
 
