@@ -14,7 +14,6 @@ CSoundDevice::~CSoundDevice (void)
 }
 
 bool CSoundDevice::Init (uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bclk) {
-	struct audio_buffer_pool * pAudioPool;
 	
 	// Basic hardware parameters (these are fixed for this implementation)
 	uint8_t pio_sm=0;

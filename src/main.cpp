@@ -48,6 +48,15 @@ void ledOff (void) {
   gpio_put(LED_PIN, 0);
 }
 
+void ledFlash (int flashes) {
+  for (int i=0; i<flashes; i++) {
+    ledOn();
+    sleep_ms(250);
+    ledOff();
+    sleep_ms(250);
+  }
+}
+
 void midiChordOn () {
   for (int i=0; i<POLYPHONY; i++) {
     picoDexed.keydown(midiNotes[i], 100);
@@ -68,21 +77,18 @@ int main(void) {
   timingInit(3);
   timingInit(4);
   timingInit(5);
-  for (int i=0; i<5; i++) {
-    ledOn();
-    sleep_ms(250);
-    ledOff();
-    sleep_ms(250);
-  }
+
+  ledFlash(2);
+  sleep_ms(500);
   
   picoDexed.Init();
-
   picoDexed.loadVoiceParameters(sDefaultVoice);
 
+  ledFlash(3);
+  
   uint32_t millicount=0;
   bool isOn = false;
   while (1) {
-    timingToggle(2);
     uint32_t millitime = millis();
     if (millitime > millicount) {
       if (isOn) {
