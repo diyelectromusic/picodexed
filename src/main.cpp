@@ -5,7 +5,7 @@
 #include "pico_perf.h"
 
 #define DEXED_SAMPLE_RATE 24000
-#define POLYPHONY 4
+#define POLYPHONY 8
 #define DEXED_NUM_SAMPLES 256
 #define PICO_NUM_SAMPLES  256
 
@@ -57,8 +57,9 @@ void initSampleBuffer (void) {
 int16_t getNextSample (void) {
   if (SampleIndex >= DEXED_NUM_SAMPLES) {
     // Refil the buffer and reset
-    timingToggle(4);
+    timingOn(4);
     dexed.getSamples(SampleBuffer, DEXED_NUM_SAMPLES);
+    timingOff(4);
     SampleIndex = 0;
   }
   return SampleBuffer[SampleIndex++];
@@ -99,6 +100,7 @@ void midiChordOff () {
 }
 
 int main(void) {
+  //gpio_debug_pins_init(); // For Pico Library timing pins
   ledInit();
   // Use GPIO 2-5 for timing signals for testing
   timingInit(2);
@@ -140,10 +142,10 @@ int main(void) {
       isOn = !isOn;
     }
 
-    timingOn(3);
-    update_buffer(ap, getNextSample);
-//    fillSampleBuffer(ap);
-    timingOff(3);
+//    timingOn(3);
+//    update_buffer(ap, getNextSample);
+    fillSampleBuffer(ap);
+//    timingOff(3);
   }
   
   return 0;
