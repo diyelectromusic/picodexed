@@ -19,6 +19,8 @@ bool CPicoDexed::Init (void)
 	m_USBMIDI.Init ();
 	m_SerialMIDI.Init ();
 	
+	m_SerialMIDI.SetChannel(1);
+	
 	return true;
 }
 
@@ -44,12 +46,15 @@ void CPicoDexed::SetMIDIChannel (uint8_t ucChannel)
 
 void CPicoDexed::keyup (uint8_t pitch)
 {
+	ledOff();
+	timingOff(3);
 	m_Dexed.keyup ((int16_t)pitch);
 }
 
 void CPicoDexed::keydown (uint8_t pitch, uint8_t velocity)
 {
-	timingToggle(3);
+	ledOn();
+	timingOn(3);
 	m_Dexed.keydown ((int16_t)pitch, velocity);
 }
 

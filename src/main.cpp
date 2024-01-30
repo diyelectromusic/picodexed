@@ -1,15 +1,12 @@
+#include <stdio.h>
 #include "pico/stdlib.h"
 #include "arm_math.h"
 #include "picodexed.h"
 #include "pico_perf.h"
 
 #define POLYPHONY 8
-#define LED_PIN PICO_DEFAULT_LED_PIN
 
 CPicoDexed picoDexed;
-
-#define MIDI_NOTES 12
-int midiNotes[MIDI_NOTES] = {48, 52, 55, 60, 64, 67, 72, 76, 79, 84, 88, 91};
 
 uint8_t sDefaultVoice[156] =	// Brass 1
 {
@@ -35,49 +32,15 @@ uint8_t sDefaultVoice[156] =	// Brass 1
 			 32,  49,  32,  63
 };
 
-void ledInit (void) {
-  gpio_init(LED_PIN);
-  gpio_set_dir(LED_PIN, GPIO_OUT);
-}
-
-void ledOn (void) {
-  gpio_put(LED_PIN, 1);
-}
-
-void ledOff (void) {
-  gpio_put(LED_PIN, 0);
-}
-
-void ledFlash (int flashes) {
-  for (int i=0; i<flashes; i++) {
-    ledOn();
-    sleep_ms(250);
-    ledOff();
-    sleep_ms(250);
-  }
-}
-
-void midiChordOn () {
-  for (int i=0; i<POLYPHONY; i++) {
-    picoDexed.keydown(midiNotes[i], 100);
-  }
-}
-
-void midiChordOff () {
-  for (int i=0; i<POLYPHONY; i++) {
-    picoDexed.keyup(midiNotes[i]);
-  }
-}
-
 int main(void) {
+  stdio_init_all();
+  printf("PicoDexed...\n");
   //gpio_debug_pins_init(); // For Pico Library timing pins
   ledInit();
-  // Use GPIO 2-5 for timing signals for testing
+  // Use GPIO 2-3 for timing signals for testing
   timingInit(2);
   timingInit(3);
-  timingInit(4);
-  timingInit(5);
-
+  
   ledFlash(2);
   sleep_ms(500);
   
@@ -86,24 +49,7 @@ int main(void) {
 
   ledFlash(3);
   
-  uint32_t millicount=0;
-  bool isOn = false;
   while (1) {
-    uint32_t millitime = millis();
-    if (millitime > millicount) {
-      if (isOn) {
-        ledOff();
-        midiChordOff();
-        millicount = millis() + 4000;
-      }
-      else {
-        ledOn();
-        midiChordOn();
-        millicount = millis() + 1000;
-      }
-      isOn = !isOn;
-    }
-
     picoDexed.Process();
   }
   
