@@ -17,14 +17,14 @@ typedef void (*buffer_callback)(int16_t *pBuffer, size_t BufferSize);
 class CSoundDevice
 {
 public:
-	CSoundDevice (void);
-	~CSoundDevice (void);
+    CSoundDevice (void);
+    ~CSoundDevice (void);
 
-	bool Init (uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bclk);
-	bool Update (buffer_callback cb);
+    bool Init (uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bclk);
+    bool Update (buffer_callback cb);
 
 private:
-	struct audio_buffer_pool *pAudioPool;
+    struct audio_buffer_pool *pAudioPool;
 };
 
 #endif

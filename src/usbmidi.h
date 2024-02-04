@@ -6,11 +6,11 @@
 class CUSBMIDIDevice : public CMIDIDevice
 {
 public:
-	CUSBMIDIDevice (CPicoDexed *pSynth);
-	~CUSBMIDIDevice (void);
+    CUSBMIDIDevice (CPicoDexed *pSynth);
+    ~CUSBMIDIDevice (void);
 
-	bool Init (void);
-	void Process (void);
+    bool Init (void);
+    void Process (void);
 
 };
 
