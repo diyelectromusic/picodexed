@@ -33,6 +33,7 @@ public:
 private:
 	void ProcessSound (void);
 	static void SampleCallback (int16_t *pBuffer, size_t BufferSize);
+	static void core1_entry (void);
 
 private:
 	CDexedAdapter		m_Dexed;

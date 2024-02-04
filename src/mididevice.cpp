@@ -11,7 +11,8 @@
 #include "picodexed.h"
 
 // 0/undef 1=Serial 2=Message
-//#define MIDI_DEBUG 2
+// Or use combinations of all three...
+//#define MIDI_DEBUG 3
 
 CMIDIDevice::CMIDIDevice (CPicoDexed *pSynth)
 :
@@ -53,10 +54,11 @@ bool CMIDIDevice::MIDIParser (void)
 		return false;
 	}
 
-#if MIDI_DEBUG==1
+#if (MIDI_DEBUG & 1)
 	if (ucByte != 0xFE) {
 		// Ignore active status bytes
-		printf("%02x ", ucByte);
+		// Use stderr to ignore serial port buffering
+		fprintf(stderr,"%02x ", ucByte);
 	}
 #endif
 	if (m_nPendingIdx == 0)
@@ -280,7 +282,6 @@ void CMIDIDevice::ResetMessage (void)
 	m_Message.Init();
 }
 
-
 void CMIDIDevice::MIDIMessageHandler (void)
 {
 	if (!m_Message.valid) {
@@ -359,10 +360,10 @@ void CMIDIDevice::MIDIMessageHandler (void)
 
 void CMIDIDevice::MIDIDump (void)
 {
-#if MIDI_DEBUG==2
+#if (MIDI_DEBUG & 2)
 	if (m_Message.valid && !m_Message.processed)
 	{
-		printf("T:%02x C:%02x D:%02x D:%02x\n", m_Message.type, m_Message.channel, m_Message.d1, m_Message.d2);
+		fprintf(stderr,"T:%02x C:%02x D:%02x D:%02x\n", m_Message.type, m_Message.channel, m_Message.d1, m_Message.d2);
 	}
 #endif
 }

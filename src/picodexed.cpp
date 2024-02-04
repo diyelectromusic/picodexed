@@ -1,3 +1,4 @@
+#include "pico/multicore.h"
 #include "picodexed.h"
 #include "pico_perf.h"
 
@@ -21,16 +22,18 @@ bool CPicoDexed::Init (void)
 	
 	m_SerialMIDI.SetChannel(1);
 	
+	// Start the multicore application - all sound processing will happen in core 1.
+	multicore_launch_core1(core1_entry);
+	
 	return true;
 }
 
 void CPicoDexed::Process (void)
 {
-    timingToggle(2);
+    timingOn(2);
 	m_USBMIDI.Process ();
 	m_SerialMIDI.Process ();
-	
-	ProcessSound();
+	timingOff(2);
 }
 
 void CPicoDexed::ProgramChange (uint8_t ucProgram)
@@ -47,14 +50,12 @@ void CPicoDexed::SetMIDIChannel (uint8_t ucChannel)
 void CPicoDexed::keyup (uint8_t pitch)
 {
 	ledOff();
-	timingOff(3);
 	m_Dexed.keyup ((int16_t)pitch);
 }
 
 void CPicoDexed::keydown (uint8_t pitch, uint8_t velocity)
 {
 	ledOn();
-	timingOn(3);
 	m_Dexed.keydown ((int16_t)pitch, velocity);
 }
 
@@ -81,4 +82,13 @@ void CPicoDexed::ProcessSound (void)
 void CPicoDexed::SampleCallback (int16_t *pBuffer, size_t BufferSize)
 {
 	m_pPicoDexed->m_Dexed.getSamples((int16_t *)pBuffer, (uint16_t)BufferSize);
+}
+
+void CPicoDexed::core1_entry (void)
+{
+	while (1)
+	{
+	    timingToggle(3);
+		m_pPicoDexed->ProcessSound();
+	}
 }

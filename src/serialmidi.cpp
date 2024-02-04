@@ -2,6 +2,7 @@
 #include "hardware/uart.h"
 #include "hardware/irq.h"
 #include "serialmidi.h"
+#include "pico_perf.h"
 
 // Core principles for interrupt-driven serial reception taken from
 // https://github.com/raspberrypi/pico-examples/blob/master/uart/uart_advanced/uart_advanced.c
@@ -46,7 +47,7 @@ void CSerialMIDIDevice::midiRxHandler (void)
 			// Buffer is full, so nothing we can do apart from drop characters...
 		}
 		else {
-			m_rxbuffer[nNextPtr] = ch;
+			m_rxbuffer[m_nRxWritePtr] = ch;
 			m_nRxWritePtr = nNextPtr;
 		}
 	}
