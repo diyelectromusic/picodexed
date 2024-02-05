@@ -1,0 +1,25 @@
+diff --git a/src/dexed.h b/src/dexed.h
+index 8d91150..379f620 100644
+--- a/src/dexed.h
++++ b/src/dexed.h
+@@ -47,6 +47,9 @@
+ #include "EngineMsfa.h"
+ #include "EngineMkI.h"
+ #include "EngineOpl.h"
++#ifdef RASPBERRYPI_PICO
++#include "dexed_if_common.h"
++#endif
+ 
+ #define NUM_VOICE_PARAMETERS 156
+ 
+@@ -383,8 +386,10 @@ class Dexed
+     uint8_t velocity_max;
+     float velocity_diff;
+ #ifndef TEENSYDUINO
++#ifndef RASPBERRYPI_PICO
+     Compressor* compressor;
+ #endif
++#endif
+ };
+ 
+ #endif

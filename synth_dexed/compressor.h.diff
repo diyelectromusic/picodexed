@@ -1,0 +1,20 @@
+diff --git a/src/compressor.h b/src/compressor.h
+index 808cd30..0cba234 100644
+--- a/src/compressor.h
++++ b/src/compressor.h
+@@ -16,6 +16,7 @@
+ #define _COMPRESSOR_H
+ 
+ #ifndef TEENSYDUINO
++#ifndef RASPBERRYPI_PICO
+ 
+ #include <arm_math.h> //ARM DSP extensions.  https://www.keil.com/pack/doc/CMSIS/DSP/html/index.html
+ #include "synth.h"
+@@ -423,6 +424,7 @@ class Compressor
+     
+ };
+ 
++#endif // RASPBERRYPI_PICO
+ #else
+ #warning USING TEENSYDUINO SO INTERNAL COMPRESSOR IS DISABLED!
+ #endif // TEENSYDUINO
