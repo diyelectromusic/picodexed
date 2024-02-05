@@ -26,7 +26,7 @@ target_include_directories(picodexed PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src
 
 # In addition to pico_stdlib required for common PicoSDK functionality, add dependency on tinyusb_device
 # for TinyUSB device support and tinyusb_board for the additional board support library used by the example
-target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib tinyusb_device tinyusb_board pico_audio_i2s)
+target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib pico_multicore tinyusb_device tinyusb_board pico_audio_i2s)
 
 target_compile_definitions(picodexed PRIVATE
     PICO_AUDIO_I2S_MONO_OUTPUT=1

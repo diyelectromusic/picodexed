@@ -33,6 +33,11 @@ uint8_t sDefaultVoice[156] =    // Brass 1
 };
 
 int main(void) {
+  // Overclock the Pico to 250MHz instead of the default 133MHz.
+  // I have it on good authority (read, my Mastodon follows)
+  // that this is an ok thing to do.  So there.
+  set_sys_clock_khz(250000, false);
+
   stdio_init_all();
   printf("PicoDexed...\n");
   //gpio_debug_pins_init(); // For Pico Library timing pins
