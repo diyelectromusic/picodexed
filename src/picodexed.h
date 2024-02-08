@@ -9,6 +9,8 @@
 #include "usbmidi.h"
 #include "serialmidi.h"
 
+#define VOICE_SIZE 156
+
 class CPicoDexed
 {
 public:
@@ -27,8 +29,11 @@ public:
     void loadVoiceParameters (uint8_t* data);
 
 
-    void ProgramChange (uint8_t ucProgram);
     void SetMIDIChannel (uint8_t ucChannel);
+
+    void ProgramChange (uint8_t ucProgram);
+    void BankSelectMSB (uint8_t ucMSB);
+    void BankSelectLSB (uint8_t ucLSB);
 
 private:
     void ProcessSound (void);
@@ -40,6 +45,11 @@ private:
     CSoundDevice        m_SoundOutput;
     CUSBMIDIDevice        m_USBMIDI;
     CSerialMIDIDevice    m_SerialMIDI;
+
+    uint8_t m_voice[VOICE_SIZE];
+    unsigned m_nBanks;
+    unsigned m_nCurrentVoice;
+    unsigned m_nCurrentBank;
 };
 
 #endif

@@ -12,7 +12,7 @@
 
 // 0/undef 1=Serial 2=Message
 // Or use combinations of all three...
-//#define MIDI_DEBUG 3
+//#define MIDI_DEBUG 2
 
 CMIDIDevice::CMIDIDevice (CPicoDexed *pSynth)
 :
@@ -319,6 +319,14 @@ void CMIDIDevice::MIDIMessageHandler (void)
             case ControlChange:
                 switch (m_Message.d1)
                 {
+                    case 0: // BANKSEL (MSB)
+                        m_pSynth->BankSelectMSB(m_Message.d2);
+                        break;
+
+                    case 32: // BANKSEL (LSB)
+                        m_pSynth->BankSelectLSB(m_Message.d2);
+                        break;
+
                     case 120: // All Sounds Off
                         m_pSynth->panic ();
                         break;
@@ -339,7 +347,8 @@ void CMIDIDevice::MIDIMessageHandler (void)
                 }
                 break;
         
-        case ProgramChange:            
+        case ProgramChange:
+            m_pSynth->ProgramChange(m_Message.d1);
             break;
 
         case PitchBend:
