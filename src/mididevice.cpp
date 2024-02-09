@@ -351,6 +351,14 @@ void CMIDIDevice::MIDIMessageHandler (void)
                         m_pSynth->SetSustain(m_Message.d2);
                         break;
                         
+                    case 65: // Portamento
+                        m_pSynth->SetPortamento(m_Message.d2);
+                        break;
+                        
+                    case 95: // Detune
+                        m_pSynth->SetMasterTune(m_Message.d2);
+                        break;
+                        
                     case 120: // All Sounds Off
                         m_pSynth->panic ();
                         break;
@@ -365,6 +373,20 @@ void CMIDIDevice::MIDIMessageHandler (void)
                         }
                         break;
                         
+                    case 126: // Poly On
+                        if (m_Message.d2 == 0)
+                        {
+                            m_pSynth->SetMonoMode(false);
+                        }
+                        break;
+                        
+                    case 127: // Mono On
+                        if (m_Message.d2 == 1)
+                        {
+                            m_pSynth->SetMonoMode(true);
+                        }
+                        break;
+                        
                     default:
                         // Unsupported
                         break;
@@ -376,6 +398,7 @@ void CMIDIDevice::MIDIMessageHandler (void)
             break;
 
         case PitchBend:
+            m_pSynth->SetPitchBend(m_Message.d1, m_Message.d2);
             break;
 
         default:

@@ -46,7 +46,7 @@ CPicoDexed::CPicoDexed ()
 
 bool CPicoDexed::Init (void)
 {
-    SetVolume (127);
+    InitControllers();
     m_nBanks = sizeof(progmem_bank) / (NUM_VOICES*VOICE_SYX_SIZE);
     if (m_nBanks != NUM_BANKS)
     {
@@ -124,6 +124,21 @@ void CPicoDexed::BankSelectLSB (uint8_t ucLSB)
     }
 }
 
+void CPicoDexed::InitControllers (void)
+{
+    m_Dexed.setGain((uint8_t)127); // Full volume
+
+    m_Dexed.setPBController(2, 0); // 2 semitone pitch bend
+
+    // Set other controllers to full range
+    m_Dexed.setMWController(99, 1, 0);
+    m_Dexed.setFCController(99, 1, 0);
+    m_Dexed.setBCController(99, 1, 0);
+    m_Dexed.setATController(99, 1, 0);
+
+    m_Dexed.ControllersRefresh();
+}
+
 void CPicoDexed::SetAfterTouch (uint8_t nAfterTouch)
 {
     if (nAfterTouch < 128)
@@ -177,6 +192,39 @@ void CPicoDexed::SetSustain (uint8_t nSustain)
     {
         m_Dexed.setSustain(true);
     }
+}
+
+void CPicoDexed::SetPortamento (uint8_t nPortamento)
+{
+    if (nPortamento < 64)
+    {
+        m_Dexed.setPortamento(0,0,0);
+    }
+    else if (nPortamento < 127)
+    {
+        m_Dexed.setPortamento(1,1,60);
+    }
+}
+
+void CPicoDexed::SetMasterTune (uint8_t nTuning)
+{
+    if (nTuning < 128)
+    {
+        m_Dexed.setMasterTune(nTuning);
+    }
+}
+
+void CPicoDexed::SetPitchBend (uint8_t nVal1, uint8_t nVal2)
+{
+    if (nVal1 < 128 && nVal2 < 128)
+    {
+        m_Dexed.setPitchbend(nVal1, nVal2);
+    }
+}
+
+void CPicoDexed::SetMonoMode (bool bMono)
+{
+    m_Dexed.setMonoMode(bMono);
 }
 
 void CPicoDexed::SetMIDIChannel (uint8_t ucChannel)

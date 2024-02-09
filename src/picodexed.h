@@ -34,13 +34,18 @@ public:
     void ProgramChange (uint8_t ucProgram);
     void BankSelectMSB (uint8_t ucMSB);
     void BankSelectLSB (uint8_t ucLSB);
-    
+    void InitControllers (void);
+
     void SetAfterTouch (uint8_t nAfterTouch);
     void SetModWheel (uint8_t nModWheel);
     void SetBreathControl (uint8_t nBC);
     void SetFootControl (uint8_t nFC);
     void SetVolume (uint8_t nVolume);
     void SetSustain (uint8_t nSustain);
+    void SetPortamento (uint8_t nPortamento);
+    void SetMasterTune (uint8_t nTuning);
+    void SetPitchBend (uint8_t nVal1, uint8_t nVal2);
+    void SetMonoMode (bool bMono);
 
 private:
     void ProcessSound (void);
