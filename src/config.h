@@ -1,6 +1,8 @@
 #ifndef _config_h
 #define _config_h
 
+#define MIDI_CHANNEL 1
+
 #define DEXED_SAMPLE_RATE    24000
 #define DEXED_POLYPHONY      16
 

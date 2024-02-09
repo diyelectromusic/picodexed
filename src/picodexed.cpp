@@ -46,6 +46,7 @@ CPicoDexed::CPicoDexed ()
 
 bool CPicoDexed::Init (void)
 {
+    SetVolume (127);
     m_nBanks = sizeof(progmem_bank) / (NUM_VOICES*VOICE_SYX_SIZE);
     if (m_nBanks != NUM_BANKS)
     {
@@ -63,7 +64,7 @@ bool CPicoDexed::Init (void)
     m_USBMIDI.Init ();
     m_SerialMIDI.Init ();
     
-    m_SerialMIDI.SetChannel(1);
+    m_SerialMIDI.SetChannel(MIDI_CHANNEL);
     
     // Start the multicore application - all sound processing will happen in core 1.
     multicore_launch_core1(core1_entry);
@@ -86,7 +87,6 @@ void CPicoDexed::ProgramChange (uint8_t ucProgram)
         // Voice in current bank
         m_Dexed.decodeVoice(m_voice, progmem_bank[m_nCurrentBank][ucProgram]);
         m_Dexed.loadVoiceParameters(m_voice);
-        fprintf(stderr,"Change voice to %d\n", ucProgram+1);
     }
     else if (ucProgram < (m_nBanks-m_nCurrentBank)*NUM_VOICES)
     {
@@ -99,7 +99,6 @@ void CPicoDexed::ProgramChange (uint8_t ucProgram)
         // Now load this voice from this bank
         m_Dexed.decodeVoice(m_voice, progmem_bank[ucBank][ucProgram]);
         m_Dexed.loadVoiceParameters(m_voice);
-        printf("Change voice to %d (%d)\n", ucProgram+1, ucBank);
     }
     else
     {
@@ -122,7 +121,61 @@ void CPicoDexed::BankSelectLSB (uint8_t ucLSB)
         // Change bank.
         // NB: Requires a ProgramChange too to select a new voice
         m_nCurrentBank = ucLSB;
-        printf("Change bank to %d\n", m_nCurrentBank+1);
+    }
+}
+
+void CPicoDexed::SetAfterTouch (uint8_t nAfterTouch)
+{
+    if (nAfterTouch < 128)
+    {
+        m_Dexed.setAftertouch(nAfterTouch);
+        m_Dexed.ControllersRefresh();
+    }
+}
+
+void CPicoDexed::SetModWheel (uint8_t nModWheel)
+{
+    if (nModWheel < 128)
+    {
+        m_Dexed.setModWheel (nModWheel);
+        m_Dexed.ControllersRefresh();
+    }
+}
+
+void CPicoDexed::SetBreathControl (uint8_t nBC)
+{
+    if (nBC < 128)
+    {
+        m_Dexed.setBreathController (nBC);
+        m_Dexed.ControllersRefresh();
+    }
+}
+
+void CPicoDexed::SetFootControl (uint8_t nFC)
+{
+    if (nFC < 128)
+    {
+        m_Dexed.setFootController(nFC);
+    }
+}
+
+void CPicoDexed::SetVolume (uint8_t nVolume)
+{
+    if (nVolume < 128)
+    {
+        m_Dexed.setGain(nVolume);
+    }
+}
+
+void CPicoDexed::SetSustain (uint8_t nSustain)
+{
+    if (nSustain < 64)
+    {
+        m_Dexed.setSustain(false);
+    }
+    else if (nSustain < 127)
+    {
+        m_Dexed.setSustain(true);
     }
 }
 

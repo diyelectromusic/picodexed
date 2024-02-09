@@ -1,5 +1,5 @@
 diff --git a/src/dexed.h b/src/dexed.h
-index 8d91150..379f620 100644
+index 8d91150..eb7caf2 100644
 --- a/src/dexed.h
 +++ b/src/dexed.h
 @@ -47,6 +47,9 @@
@@ -12,9 +12,19 @@ index 8d91150..379f620 100644
  
  #define NUM_VOICE_PARAMETERS 156
  
-@@ -383,8 +386,10 @@ class Dexed
+@@ -272,6 +275,7 @@ class Dexed
+     float getFilterResonance(void);
+     void setGain(float gain);
+     float getGain(void);
++    void setGain(uint8_t gain);
+ 
+     // Voice configuration methods
+     void setOPRateAll(uint8_t rate);
+@@ -382,9 +386,12 @@ class Dexed
+     uint8_t velocity_offset;
      uint8_t velocity_max;
      float velocity_diff;
++    uint8_t simple_gain=0;
  #ifndef TEENSYDUINO
 +#ifndef RASPBERRYPI_PICO
      Compressor* compressor;

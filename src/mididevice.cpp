@@ -315,6 +315,10 @@ void CMIDIDevice::MIDIMessageHandler (void)
             case NoteOff:
                 m_pSynth->keyup (m_Message.d1);
                 break;
+                
+            case AfterTouchChannel:
+                m_pSynth->SetAfterTouch(m_Message.d1);
+                break;
 
             case ControlChange:
                 switch (m_Message.d1)
@@ -322,11 +326,31 @@ void CMIDIDevice::MIDIMessageHandler (void)
                     case 0: // BANKSEL (MSB)
                         m_pSynth->BankSelectMSB(m_Message.d2);
                         break;
-
+                        
+                    case 1: // Modulation Wheel
+                        m_pSynth->SetModWheel(m_Message.d2);
+                        break;
+                        
+                    case 2: // Breath Controller
+                        m_pSynth->SetBreathControl(m_Message.d2);
+                        break;
+                        
+                    case 4: // Foot pedal
+                        m_pSynth->SetFootControl(m_Message.d2);
+                        break;
+                        
+                    case 7: // Volume
+                        m_pSynth->SetVolume(m_Message.d2);
+                        break;
+                        
                     case 32: // BANKSEL (LSB)
                         m_pSynth->BankSelectLSB(m_Message.d2);
                         break;
 
+                    case 64: // Sustain
+                        m_pSynth->SetSustain(m_Message.d2);
+                        break;
+                        
                     case 120: // All Sounds Off
                         m_pSynth->panic ();
                         break;

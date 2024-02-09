@@ -34,6 +34,13 @@ public:
     void ProgramChange (uint8_t ucProgram);
     void BankSelectMSB (uint8_t ucMSB);
     void BankSelectLSB (uint8_t ucLSB);
+    
+    void SetAfterTouch (uint8_t nAfterTouch);
+    void SetModWheel (uint8_t nModWheel);
+    void SetBreathControl (uint8_t nBC);
+    void SetFootControl (uint8_t nFC);
+    void SetVolume (uint8_t nVolume);
+    void SetSustain (uint8_t nSustain);
 
 private:
     void ProcessSound (void);
@@ -50,6 +57,7 @@ private:
     unsigned m_nBanks;
     unsigned m_nCurrentVoice;
     unsigned m_nCurrentBank;
+    unsigned m_nVolume;
 };
 
 #endif
