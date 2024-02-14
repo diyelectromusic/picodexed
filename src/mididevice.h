@@ -6,26 +6,35 @@
 
 class CPicoDexed;
 
+#define SYSEX_MAX_SIZE     1024
+#define SYSEX_MANID_YAMAHA 43
+
 class CMIDIMsg
 {
 public:
-   CMIDIMsg (void) {}
-   ~CMIDIMsg (void) {}
+    CMIDIMsg (void) {}
+    ~CMIDIMsg (void) {}
 
-   void Init (void) {
-       channel = type = d1 = d2 = 0;
-       length = 0;
-       valid = false;
-       processed = false;
-    }   
+    inline void Init (void) {
+        channel = type = d1 = d2 = 0;
+        length = 0;
+        valid = false;
+        processed = false;
+    }
+	
+	inline unsigned getSysExSize (void) {
+	    unsigned nSize = (unsigned)d2 << 8 | d1;
+		return nSize>SYSEX_MAX_SIZE ? SYSEX_MAX_SIZE : nSize;
+	}
 
-   uint8_t  channel;
-   uint8_t  type;
-   uint8_t  d1;
-   uint8_t  d2;
-   unsigned length;
-   bool     valid;
-   bool     processed;
+    uint8_t  channel;
+    uint8_t  type;
+    uint8_t  d1;
+    uint8_t  d2;
+    unsigned length;
+    bool     valid;
+    bool     processed;
+    uint8_t  sysex[SYSEX_MAX_SIZE];
 };
 
 enum MidiType: uint8_t
@@ -81,6 +90,7 @@ protected:
 
 private:
     void ResetMessage (void);
+	void SysExMessageHandler (const uint8_t* pMessage, const size_t nLength);
 
 private:
     CPicoDexed *m_pSynth;

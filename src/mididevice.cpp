@@ -125,10 +125,12 @@ bool CMIDIDevice::MIDIParser (void)
 
             case SystemExclusiveStart:
             case SystemExclusiveEnd:
-                // not supported yet
-                return false;
+                m_nPendingExpectedLength = SYSEX_MAX_SIZE;
+                m_ucRunningStatus = InvalidType;
+                m_Message.sysex[0] = ucPendingType;
                 break;
 
+            case InvalidType:
             default:
                 // Invalid type
                 ResetMessage();
@@ -184,11 +186,30 @@ bool CMIDIDevice::MIDIParser (void)
                     m_Message.processed = false;
                     return true;
 
-                    // System Exclusive
                 case SystemExclusiveStart:
                 case SystemExclusiveEnd:
-                    // Ignore for now...
-                    return true;
+                    if (m_Message.sysex[0] == SystemExclusiveStart)
+                    {
+                        // We're finishing up a SysEx message then
+                        m_Message.sysex[m_nPendingIdx] = ucByte;
+                        m_nPendingIdx++;
+                        m_Message.type = SystemExclusive;
+                        m_Message.d1 = m_nPendingIdx & 0xFF;
+                        m_Message.d2 = (uint8_t)(m_nPendingIdx >> 8);
+                        m_Message.channel = 0;
+                        m_Message.length = m_nPendingIdx;
+                        m_Message.valid = true;
+                        
+                        ResetMessage();
+                        
+                        return true;
+                    }
+                    else
+                    {
+                        // Error
+                        ResetMessage();
+                        return false;
+                    }
 
                 default:
                     break;
@@ -196,9 +217,9 @@ bool CMIDIDevice::MIDIParser (void)
         }
 
         // Add extracted data byte to pending message
-        if ((m_ucPending[0] == SystemExclusiveStart) || (m_ucPending[0] == SystemExclusiveEnd))
+        if (m_ucPending[0] == SystemExclusiveStart)
         {
-            // Ignoring SysEx
+            m_Message.sysex[m_nPendingIdx] = ucByte;
         }
         else
         {
@@ -208,10 +229,9 @@ bool CMIDIDevice::MIDIParser (void)
         // Now we are going to check if we have reached the end of the message
         if (m_nPendingIdx >= (m_nPendingExpectedLength - 1))
         {
-            if ((m_ucPending[0] == SystemExclusiveStart)
-            ||  (m_ucPending[0] == SystemExclusiveEnd))
+            if (m_ucPending[0] == SystemExclusiveStart)
             {
-                // Ignoring SysEx
+                // SysEx is too big!
                 return false;
             }
 
@@ -259,7 +279,7 @@ bool CMIDIDevice::MIDIParser (void)
 
                 default:
                     // No running status
-                    m_ucRunningStatus = 0;
+                    m_ucRunningStatus = InvalidType;
                     break;
             }
             return true;
@@ -295,7 +315,21 @@ void CMIDIDevice::MIDIMessageHandler (void)
     }
 
     // Valid channels values internally = 1-16, MIDIDisabled or MIDIOmni
-    if (m_Message.channel == m_ucChannel || m_ucChannel == MIDIOmni)
+    if (m_Message.type == SystemExclusive)
+    {
+        // Check for a Yamaha SysEx Message
+        if ((m_Message.sysex[0] == SystemExclusive) && (m_Message.sysex[1] == SYSEX_MANID_YAMAHA))
+        {
+            uint8_t ucSysExDevice = m_Message.sysex[2] & 0x0F;  // Yamaha SysEx Device Number
+            unsigned nSysExLen = m_Message.getSysExSize();
+            if ((ucSysExDevice == MIDI_SYSEX_DEVICE_ID) && (m_Message.sysex[nSysExLen-1] == SystemExclusiveEnd))
+            {
+                // It is recognisably a Yamaha style, complete SysEx message for our device
+                SysExMessageHandler(m_Message.sysex, m_Message.getSysExSize());
+            }
+        }
+    }
+    else if (m_Message.channel == m_ucChannel || m_ucChannel == MIDIOmni)
     {
         switch (m_Message.type)
         {
@@ -412,6 +446,132 @@ void CMIDIDevice::MIDIMessageHandler (void)
     {
         // m_ucChannel == MIDIDisabled
     }
+}
+
+void CMIDIDevice::SysExMessageHandler (const uint8_t* pMessage, const size_t nLength)
+{
+  int16_t sysex_return;
+
+  sysex_return = m_pSynth->checkSystemExclusive(pMessage, nLength);
+  fprintf(stderr, "SysEx: SYSEX handler return value: %d", sysex_return);
+
+  switch (sysex_return)
+  {
+    case -1:
+      fprintf(stderr, "SysEx: Error: SysEx end status byte not detected.");
+      break;
+    case -2:
+      fprintf(stderr, "SysEx: Error: SysEx vendor not Yamaha.");
+      break;
+    case -3:
+      fprintf(stderr, "SysEx: Error: Unknown SysEx parameter change.");
+      break;
+    case -4:
+      fprintf(stderr, "SysEx: Error: Unknown SysEx voice or function.");
+      break;
+    case -5:
+      fprintf(stderr, "SysEx: Error: Not a SysEx voice bulk upload.");
+      break;
+    case -6:
+      fprintf(stderr, "SysEx: Error: Wrong length for SysEx voice bulk upload (not 155).");
+      break;
+    case -7:
+      fprintf(stderr, "SysEx: Error: Checksum error for one voice.");
+      break;
+    case -8:
+      fprintf(stderr, "SysEx: Error: Not a SysEx bank bulk upload.");
+      break;
+    case -9:
+      fprintf(stderr, "SysEx: Error: Wrong length for SysEx bank bulk upload (not 4096).");
+      break;
+    case -10:
+      fprintf(stderr, "SysEx: Error: Checksum error for bank.");
+      break;
+    case -11:
+      fprintf(stderr, "SysEx: Error: Unknown SysEx message.");
+      break;
+    case 64:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->SetMonoMode(pMessage[5]);
+      break;
+    case 65:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setPitchbendRange(pMessage[5]);
+      break;
+    case 66:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setPitchbendStep(pMessage[5]);
+      break;
+    case 67:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setPortamentoMode(pMessage[5]);
+      break;
+    case 68:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setPortamentoGlissando(pMessage[5]);
+      break;
+    case 69:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setPortamentoTime(pMessage[5]);
+      break;
+    case 70:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setModWheelRange(pMessage[5]);
+      break;
+    case 71:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setModWheelTarget(pMessage[5]);
+      break;
+    case 72:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setFootControllerRange(pMessage[5]);
+      break;
+    case 73:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setFootControllerTarget(pMessage[5]);
+      break;
+    case 74:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setBreathControllerRange(pMessage[5]);
+      break;
+    case 75:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setBreathControllerTarget(pMessage[5]);
+      break;
+    case 76:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setAftertouchRange(pMessage[5]);
+      break;
+    case 77:
+      fprintf(stderr, "SysEx: SysEx Function parameter change: %d Value %d",pMessage[4],pMessage[5]);
+      m_pSynth->setAftertouchTarget(pMessage[5]);
+      break;
+    case 100:
+      // load sysex-data into voice memory
+      fprintf(stderr, "SysEx: One Voice bulk upload");
+      m_pSynth->loadVoiceParameters(pMessage);
+      break;
+    case 200:
+      fprintf(stderr, "SysEx: Bank bulk upload - NOT SUPPORTED.");
+      break;
+    default:
+      if(sysex_return >= 300 && sysex_return < 500)
+      {
+        fprintf(stderr, "SysEx: SysEx voice parameter change: Parameter %d value: %d",pMessage[4] + ((pMessage[3] & 0x03) * 128), pMessage[5]);
+        m_pSynth->setVoiceDataElement(pMessage[4] + ((pMessage[3] & 0x03) * 128), pMessage[5]);
+        switch(pMessage[4] + ((pMessage[3] & 0x03) * 128))
+        {
+          case 134:
+            m_pSynth->notesOff();
+            break;
+        }
+      }
+      else if(sysex_return >= 500 && sysex_return < 600)
+      {
+        fprintf(stderr, "SysEx: SysEx send voice %u request - NOT SUPPORTED",sysex_return-500);
+      }
+      break;
+  }
 }
 
 void CMIDIDevice::MIDIDump (void)

@@ -47,6 +47,24 @@ public:
     void SetPitchBend (uint8_t nVal1, uint8_t nVal2);
     void SetMonoMode (bool bMono);
 
+    // SysEx handling functions
+    int16_t checkSystemExclusive (const uint8_t* pMessage, const size_t nLength);
+	void setPitchbendRange(uint8_t range);
+	void setPitchbendStep(uint8_t step);
+	void setPortamentoMode(uint8_t mode);
+	void setPortamentoGlissando(uint8_t glissando);
+	void setPortamentoTime(uint8_t time);
+	void setModWheelRange(uint8_t range);
+	void setModWheelTarget(uint8_t target);
+	void setFootControllerRange(uint8_t range);
+	void setFootControllerTarget(uint8_t target);
+	void setBreathControllerRange(uint8_t range);
+	void setBreathControllerTarget(uint8_t target);
+	void setAftertouchRange(uint8_t range);
+	void setAftertouchTarget(uint8_t target);
+	void loadVoiceParameters(const uint8_t* data);
+	void setVoiceDataElement(uint8_t data, uint8_t number);
+
 private:
     void ProcessSound (void);
     static void SampleCallback (int16_t *pBuffer, size_t BufferSize);

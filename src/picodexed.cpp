@@ -256,9 +256,114 @@ void CPicoDexed::notesOff(void)
     m_Dexed.notesOff ();
 }
 
-void CPicoDexed::loadVoiceParameters (uint8_t* data)
+int16_t CPicoDexed::checkSystemExclusive (const uint8_t* pMessage, const size_t nLength)
 {
-    m_Dexed.loadVoiceParameters (data);
+    return m_Dexed.checkSystemExclusive(pMessage, nLength);
+}
+
+void CPicoDexed::setPitchbendRange(uint8_t range)
+{
+    m_Dexed.setPitchbendRange(constrain (range, 0, 12));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setPitchbendStep(uint8_t step)
+{
+    m_Dexed.setPitchbendStep(constrain (step, 0, 12));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setPortamentoMode(uint8_t mode)
+{
+    m_Dexed.setPortamentoMode(constrain (mode, 0, 1));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setPortamentoGlissando(uint8_t glissando)
+{
+    m_Dexed.setPortamentoGlissando(constrain (glissando, 0, 1));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setPortamentoTime(uint8_t time)
+{
+    m_Dexed.setPortamentoTime(constrain (time, 0, 99));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setModWheelRange(uint8_t range)
+{
+    m_Dexed.setMWController(range, m_Dexed.getModWheelTarget(), 0);
+//  m_Dexed.setModWheelRange(constrain(range, 0, 99));  replaces with the above due to wrong constrain on dexed_synth module.
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setModWheelTarget(uint8_t target)
+{
+    m_Dexed.setModWheelTarget(constrain(target, 0, 7));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setFootControllerRange(uint8_t range)
+{
+    m_Dexed.setFCController(range, m_Dexed.getFootControllerTarget(), 0);
+//  m_Dexed.setFootControllerRange(constrain(range, 0, 99));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setFootControllerTarget(uint8_t target)
+{
+    m_Dexed.setFootControllerTarget(constrain(target, 0, 7));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setBreathControllerRange(uint8_t range)
+{
+    m_Dexed.setBCController(range, m_Dexed.getBreathControllerTarget(), 0);
+//  m_Dexed.setBreathControllerRange(constrain(range, 0, 99));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setBreathControllerTarget(uint8_t target)
+{
+    m_Dexed.setBreathControllerTarget(constrain(target, 0, 7));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setAftertouchRange(uint8_t range)
+{
+    m_Dexed.setATController(range, m_Dexed.getAftertouchTarget(), 0);
+//  m_pTG[nTG]->setAftertouchRange(constrain(range, 0, 99));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setAftertouchTarget(uint8_t target)
+{
+    m_Dexed.setAftertouchTarget(constrain(target, 0, 7));
+    m_Dexed.ControllersRefresh();
+}
+
+void CPicoDexed::setVoiceDataElement(uint8_t data, uint8_t number)
+{
+    m_Dexed.setVoiceDataElement(constrain(data, 0, 155),constrain(number, 0, 99));
+//  m_Dexed.doRefreshVoice();
+}
+
+void CPicoDexed::loadVoiceParameters (const uint8_t* data)
+{
+    uint8_t voice[161];
+
+    memcpy(voice, data, sizeof(uint8_t)*161);
+
+    // fix voice name
+    for (uint8_t i = 0; i < 10; i++)
+    {
+        if (voice[151 + i] > 126) // filter characters
+            voice[151 + i] = 32;
+    }
+
+    m_Dexed.loadVoiceParameters(&voice[6]);
+    m_Dexed.doRefreshVoice();
 }
 
 void CPicoDexed::ProcessSound (void)
