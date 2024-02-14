@@ -3,11 +3,12 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <cstring>
 
 class CPicoDexed;
 
 #define SYSEX_MAX_SIZE     1024
-#define SYSEX_MANID_YAMAHA 43
+#define SYSEX_MANID_YAMAHA 0x43
 
 class CMIDIMsg
 {
@@ -20,12 +21,13 @@ public:
         length = 0;
         valid = false;
         processed = false;
+		memset(sysex, 0, SYSEX_MAX_SIZE*sizeof(uint8_t));
     }
-	
-	inline unsigned getSysExSize (void) {
-	    unsigned nSize = (unsigned)d2 << 8 | d1;
-		return nSize>SYSEX_MAX_SIZE ? SYSEX_MAX_SIZE : nSize;
-	}
+    
+    inline unsigned getSysExSize (void) {
+        unsigned nSize = (unsigned)d2 << 8 | d1;
+        return nSize>SYSEX_MAX_SIZE ? SYSEX_MAX_SIZE : nSize;
+    }
 
     uint8_t  channel;
     uint8_t  type;
@@ -89,8 +91,10 @@ protected:
     bool MIDIParser (void);
 
 private:
-    void ResetMessage (void);
-	void SysExMessageHandler (const uint8_t* pMessage, const size_t nLength);
+    void ResetMessage (bool bFull);
+    void SysExMessageHandler (const uint8_t* pMessage, const size_t nLength);
+	void debugSysEx (int16_t sysex_return, const uint8_t* pMessage);
+	MidiType ParseStatus (uint8_t uctatus);
 
 private:
     CPicoDexed *m_pSynth;
