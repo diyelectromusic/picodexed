@@ -65,6 +65,7 @@ bool CPicoDexed::Init (void)
     m_SerialMIDI.Init ();
     
     m_SerialMIDI.SetChannel(MIDI_CHANNEL);
+    m_USBMIDI.SetChannel(MIDI_CHANNEL);
     
     // Start the multicore application - all sound processing will happen in core 1.
     multicore_launch_core1(core1_entry);

@@ -13,6 +13,7 @@ target_sources(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/serialmidi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/sounddevice.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/usbmidi.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/usbtask.c
     ${CMAKE_CURRENT_LIST_DIR}/src/usb_descriptors.c
 )
 
