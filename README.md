@@ -12,14 +12,31 @@ Kevin
 1. Install the Pico SDK, toolchain and core libraries as per https://github.com/raspberrypi/pico-sdk.
 2. Clone this repository.
 3. Run the getsubmod.sh script to initialise Synth_Dexed.
+4. Apply the patches to Synth_Dexed that can be found in synth_dexed.
 4. Set the PICO_SDK_PATH variable to point to your Pico SDK installation.
 5. Go to the build directory and run `cmake ..` followed by `make`.
 
 Hardware requirements:
 * [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)
-* [Pimoroni Pico Audio Pack](https://shop.pimoroni.com/products/pico-audio-pack)
+* I2S DAC.  Has been tested with a PCM5102 and the [Pimoroni Pico Audio Pack](https://shop.pimoroni.com/products/pico-audio-pack)
+* Optional: MIDI IN (more here: )
 
 It might work with other I2S audio interfaces too if the GPIO usage is updated appropriately.  At some point it will probably support PWM too.
+
+**Note: The Raspberry Pi Pico is overclocked to 250MHz.**
+
+## Current Features
+
+* 16-note polyphony at a sample rate of 24000Hz.
+* USB and Serial MIDI support.
+* 8 banks of 32 voices (rom1a, rom1b, rom2a, rom2b, rom3a, rom3b, rom4a, rom4b) selectable over MIDI.
+* Voice parameter changes via SysEx - e.g. using Dexed.
+* Range of controllers as supported by Synth_Dexed.
+
+## More Information:
+
+* Details of the hardware build can be found here: https://diyelectromusic.wordpress.com/2024/02/18/raspberry-pi-pico-synth_dexed-part-5/
+* Details of the MIDI implementation can be found here: https://diyelectromusic.wordpress.com/2024/02/16/raspberry-pi-pico-synth_dexed-part-4/
 
 ## Credits
 
