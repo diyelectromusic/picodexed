@@ -16,6 +16,8 @@ Kevin
 4. Set the PICO_SDK_PATH variable to point to your Pico SDK installation.
 5. Go to the build directory and run `cmake ..` followed by `make`.
 
+There are some pre-built prototype UF2 files in the build area which can be dragged directly onto a Pico in boot mode.
+
 Hardware requirements:
 * [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)
 * I2S DAC.  Has been tested with a PCM5102 and the [Pimoroni Pico Audio Pack](https://shop.pimoroni.com/products/pico-audio-pack)
