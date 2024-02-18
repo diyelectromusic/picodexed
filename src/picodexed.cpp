@@ -381,7 +381,7 @@ void CPicoDexed::core1_entry (void)
 {
     while (1)
     {
-        timingToggle(3);
+//        timingToggle(3);
         m_pPicoDexed->ProcessSound();
     }
 }

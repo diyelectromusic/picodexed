@@ -21,7 +21,7 @@ public:
         length = 0;
         valid = false;
         processed = false;
-		memset(sysex, 0, SYSEX_MAX_SIZE*sizeof(uint8_t));
+        memset(sysex, 0, SYSEX_MAX_SIZE*sizeof(uint8_t));
     }
     
     inline unsigned getSysExSize (void) {
@@ -93,8 +93,8 @@ protected:
 private:
     void ResetMessage (bool bFull);
     void SysExMessageHandler (const uint8_t* pMessage, const size_t nLength);
-	void debugSysEx (int16_t sysex_return, const uint8_t* pMessage);
-	MidiType ParseStatus (uint8_t uctatus);
+    void debugSysEx (int16_t sysex_return, const uint8_t* pMessage);
+    MidiType ParseStatus (uint8_t uctatus);
 
 private:
     CPicoDexed *m_pSynth;

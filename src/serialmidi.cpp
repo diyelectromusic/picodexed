@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/irq.h"
@@ -70,6 +71,8 @@ bool CSerialMIDIDevice::Init (void)
     irq_set_enabled(UART_IRQ, true);
     uart_set_irq_enables(M_UART, true, false); // Rx interrupt only
     
+    fprintf(stderr, "Serial MIDI Enabled\n");
+
     return true;
 };
 
