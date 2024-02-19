@@ -1,5 +1,7 @@
 #include "pico/audio_i2s.h"
+#include "pico/audio_pwm.h"
 #include "sounddevice.h"
+#include "config.h"
 
 #define SAMPLES_PER_BUFFER 256
 
@@ -13,13 +15,8 @@ CSoundDevice::~CSoundDevice (void)
 {
 }
 
-bool CSoundDevice::Init (uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bclk) {
-    
-    // Basic hardware parameters (these are fixed for this implementation)
-    uint8_t pio_sm=0;
-    uint8_t dma_ch=0;
-    uint16_t num_samples=SAMPLES_PER_BUFFER;
-    
+bool CSoundDevice::Init (uint32_t sample_rate)
+{
     // Setting up these structures is essentially "boiler plate" code from the
     // Raspberry Pi Pico example code...
     static audio_format_t audio_format = {
@@ -36,11 +33,34 @@ bool CSoundDevice::Init (uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bcl
     struct audio_buffer_pool *producer_pool = audio_new_producer_pool(
         &producer_format,
         3,
-        num_samples
+        SAMPLES_PER_BUFFER
     );
+#if AUDIO_OUTPUT==AUDIO_I2S
+    if (!InitI2S (&audio_format, producer_pool))
+    {
+        return false;
+    }
+#elif AUDIO_OUTPUT==AUDIO_PWM
+    if (!InitPWM (&audio_format, producer_pool))
+    {
+        return false;
+    }
+#else
+#error "No Audio Configuration specified"
+#endif
+    pAudioPool = producer_pool;
+    
+    return true;
+}
 
-    const struct audio_format *output_format;
-
+bool CSoundDevice::InitI2S (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool)
+{
+    // Basic hardware parameters (these are fixed for this implementation)
+    uint8_t pio_sm=0;
+    uint8_t dma_ch=0;
+    uint8_t pin_data=I2S_DATA_PIN;
+    uint8_t pin_bclk=I2S_BCLK_PIN;
+    
     struct audio_i2s_config config = {
         .data_pin = pin_data,
         .clock_pin_base = pin_bclk,
@@ -48,22 +68,54 @@ bool CSoundDevice::Init (uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bcl
         .pio_sm = pio_sm,
     };
 
-    output_format = audio_i2s_setup(&audio_format, &config);
+    const struct audio_format *output_format;
+    output_format = audio_i2s_setup(pAudioFormat, &config);
     if (!output_format) {
         return false;
-        //panic("PicoAudio: Unable to open audio device.\n");
     }
 
-    bool status = audio_i2s_connect(producer_pool);
+    bool status = audio_i2s_connect(pBufferPool);
     if (!status) {
         return false;
-        //panic("PicoAudio: Unable to connect to audio device.\n");
     }
 
     audio_i2s_set_enabled(true);
 
-    pAudioPool = producer_pool;
-    
+    return true;
+}
+
+bool CSoundDevice::InitPWM (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool)
+{
+    // Basic hardware parameters (these are fixed for this implementation)
+    uint8_t pio_sm=0;
+    uint8_t dma_ch=0;
+    uint8_t base_pin=PWM_PIN;
+
+    // This is essentially default_mono_channel_config
+    // but using our specified PWM output pin.
+    const audio_pwm_channel_config_t config =
+    {
+        .core = {
+            .base_pin = base_pin,
+            .dma_channel = dma_ch,
+            .pio_sm = pio_sm
+        },
+        .pattern = 3,
+    };
+
+    const struct audio_format *output_format;
+    output_format = audio_pwm_setup(pAudioFormat, -1, &config);    
+    if (!output_format) {
+        return false;
+    }
+
+    bool status = audio_pwm_default_connect(pBufferPool, false);
+    if (!status) {
+        return false;
+    }
+
+    audio_pwm_set_enabled(true);
+
     return true;
 }
 

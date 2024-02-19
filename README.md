@@ -21,9 +21,11 @@ There are some pre-built prototype UF2 files in the build area which can be drag
 Hardware requirements:
 * [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/)
 * I2S DAC.  Has been tested with a PCM5102 and the [Pimoroni Pico Audio Pack](https://shop.pimoroni.com/products/pico-audio-pack)
-* Optional: MIDI IN (more here: )
+* Optional: MIDI IN ([more here](https://diyelectromusic.wordpress.com/2024/02/18/raspberry-pi-pico-synth_dexed-part-5/))
 
-It might work with other I2S audio interfaces too if the GPIO usage is updated appropriately.  At some point it will probably support PWM too.
+It might work with other I2S audio interfaces too if the GPIO usage is updated appropriately.
+
+There is a build that uses PWM too, but it is not recommended. It is only 8-note polyphonic and requires additional filter circuitry [as described here](https://diyelectromusic.wordpress.com/2024/02/18/raspberry-pi-pico-synth_dexed-part-5/).
 
 **Note: The Raspberry Pi Pico is overclocked to 250MHz.**
 
@@ -34,6 +36,7 @@ It might work with other I2S audio interfaces too if the GPIO usage is updated a
 * 8 banks of 32 voices (rom1a, rom1b, rom2a, rom2b, rom3a, rom3b, rom4a, rom4b) selectable over MIDI.
 * Voice parameter changes via SysEx - e.g. using Dexed.
 * Range of controllers as supported by Synth_Dexed.
+* I2S audio output (recommended); PWM audio output(optional).
 
 ## More Information:
 

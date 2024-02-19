@@ -60,7 +60,7 @@ bool CPicoDexed::Init (void)
     m_nCurrentVoice = 0;
     ProgramChange(m_nCurrentVoice);
 
-    m_SoundOutput.Init (DEXED_SAMPLE_RATE, I2S_DATA_PIN, I2S_BCLK_PIN);
+    m_SoundOutput.Init (DEXED_SAMPLE_RATE);
     m_USBMIDI.Init ();
     m_SerialMIDI.Init ();
     

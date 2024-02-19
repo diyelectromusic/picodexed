@@ -20,8 +20,12 @@ public:
     CSoundDevice (void);
     ~CSoundDevice (void);
 
-    bool Init (uint32_t sample_rate, uint8_t pin_data, uint8_t pin_bclk);
+    bool Init (uint32_t sample_rate);
     bool Update (buffer_callback cb);
+
+private:
+    bool InitI2S (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool);
+    bool InitPWM (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool);
 
 private:
     struct audio_buffer_pool *pAudioPool;
