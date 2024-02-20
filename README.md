@@ -5,6 +5,8 @@ More details can be found here: https://diyelectromusic.wordpress.com/2024/01/09
 
 This is just experimental and likely to develop, change or break somewhat erratically as I thinker with it.  It remains to be seen if it will go anywhere or not.  For now, it's just a bit of fun.
 
+** No fitness for purpose can be implied.  Use at your own risk. **
+
 Kevin
 
 ## Basic Build Instructions
@@ -13,7 +15,7 @@ Kevin
 2. Clone this repository.
 3. Run the getsubmod.sh script to initialise Synth_Dexed.
 5. Apply the patches to Synth_Dexed that can be found in synth_dexed.
-4. Run the getboices.sh script to get and initialise the ROM voices.
+4. Run the getvoices.sh script to get and initialise the ROM voices.
 4. Set the PICO_SDK_PATH variable to point to your Pico SDK installation.
 5. Go to the build directory and run `cmake ..` followed by `make`.
 
@@ -43,6 +45,12 @@ There is a build that uses PWM too, but it is not recommended. It is only 8-note
 
 * Details of the hardware build can be found here: https://diyelectromusic.wordpress.com/2024/02/18/raspberry-pi-pico-synth_dexed-part-5/
 * Details of the MIDI implementation can be found here: https://diyelectromusic.wordpress.com/2024/02/16/raspberry-pi-pico-synth_dexed-part-4/
+
+## Contributions
+
+This is just an information store for my personal playing around with this at the moment.  As such I'm not accepting contributions at this time.
+
+There is no implied fitness for purpose or guarantee of usefulness or success.  Everything is experimental and subject to change without notice, but published freely here for general interest for anyone who would like to follow along for the ride.
 
 ## Credits
 
