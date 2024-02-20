@@ -12,7 +12,8 @@ Kevin
 1. Install the Pico SDK, toolchain and core libraries as per https://github.com/raspberrypi/pico-sdk.
 2. Clone this repository.
 3. Run the getsubmod.sh script to initialise Synth_Dexed.
-4. Apply the patches to Synth_Dexed that can be found in synth_dexed.
+5. Apply the patches to Synth_Dexed that can be found in synth_dexed.
+4. Run the getboices.sh script to get and initialise the ROM voices.
 4. Set the PICO_SDK_PATH variable to point to your Pico SDK installation.
 5. Go to the build directory and run `cmake ..` followed by `make`.
 
