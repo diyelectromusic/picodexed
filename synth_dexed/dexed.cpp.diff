@@ -1,10 +1,19 @@
 diff --git a/src/dexed.cpp b/src/dexed.cpp
-index cf501f8..507f678 100644
+index 987b61a..46b7780 100644
 --- a/src/dexed.cpp
 +++ b/src/dexed.cpp
-@@ -80,7 +80,9 @@ Dexed::Dexed(uint8_t maxnotes, int rate)
+@@ -44,7 +44,7 @@ Dexed::Dexed(uint8_t maxnotes, uint32_t rate)
+    samplerate{float32_t(rate)},
+    max_notes{maxnotes},
+    engineMsfa{nullptr}, engineMkI{nullptr}, engineOpl{nullptr}
+-#if !defined(TEENSYDUINO)
++#if !defined(TEENSYDUINO) && !defined(RASPBERRYPI_PICO)
+    , compressor{nullptr}
+ #endif // !defined(TEENSYDUINO)
+    {
+@@ -103,7 +103,9 @@ Dexed::Dexed(uint8_t maxnotes, uint32_t rate)
+   engineOpl = new EngineOpl;
    setEngineType(MKI);
- 
  #ifndef TEENSYDUINO
 +#ifndef RASPBERRYPI_PICO
    compressor = new Compressor(samplerate);
@@ -12,7 +21,16 @@ index cf501f8..507f678 100644
  #endif
    use_compressor = false;
  }
-@@ -228,20 +230,69 @@ void Dexed::getSamples(float32_t* buffer, uint16_t n_samples)
+@@ -118,7 +120,7 @@ Dexed::~Dexed()
+   delete engineMsfa;
+   delete engineMkI;
+   delete engineOpl;
+-#if !defined(TEENSYDUINO)
++#if !defined(TEENSYDUINO) && !defined(RASPBERRYPI_PICO)
+   delete compressor;
+ #endif // !defined(TEENSYDUINO)
+ }
+@@ -219,20 +221,69 @@ void Dexed::getSamples(float* buffer, uint16_t n_samples)
      }
    }
  
@@ -30,7 +48,7 @@ index cf501f8..507f678 100644
  void Dexed::getSamples(int16_t* buffer, uint16_t n_samples)
  {
 +#if 0
-   float32_t tmp[n_samples];
+   float tmp[n_samples];
  
    getSamples(tmp, n_samples);
    arm_float_to_q15(tmp, (q15_t*)buffer, n_samples);
@@ -82,8 +100,8 @@ index cf501f8..507f678 100644
 +#endif
  }
  
- void Dexed::keydown(int16_t pitch, uint8_t velo) {
-@@ -1193,6 +1244,27 @@ float Dexed::getFilterResonance(void)
+ void Dexed::keydown(uint8_t pitch, uint8_t velo) {
+@@ -1280,6 +1331,27 @@ float Dexed::getFilterResonance(void)
    return (fx.Reso);
  }
  
@@ -111,7 +129,7 @@ index cf501f8..507f678 100644
  void Dexed::setGain(float gain)
  {
    fx.Gain = gain;
-@@ -1754,6 +1826,7 @@ void Dexed::setVelocityScale(uint8_t setup = MIDI_VELOCITY_SCALING_OFF)
+@@ -1841,6 +1913,7 @@ void Dexed::setVelocityScale(uint8_t setup = MIDI_VELOCITY_SCALING_OFF)
  }
  
  #ifndef TEENSYDUINO
@@ -119,7 +137,7 @@ index cf501f8..507f678 100644
  void Dexed::setCompressor(bool enable_compressor)
  {
    use_compressor = enable_compressor;
-@@ -1814,3 +1887,4 @@ float32_t Dexed::getCompressionRatio(void)
+@@ -1901,3 +1974,4 @@ float Dexed::getCompressionRatio(void)
    return (compressor->getCompressionRatio());
  }
  #endif

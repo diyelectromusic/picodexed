@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "hardware/clocks.h"
 #include "arm_math.h"
 #include "picodexed.h"
 #include "pico_perf.h"
@@ -13,16 +14,16 @@ int main(void) {
   // Overclock the Pico to 250MHz instead of the default 133MHz.
   // I have it on good authority (read, my Mastodon follows)
   // that this is an ok thing to do.  So there.
-#if DEXED_OVERCLOCK==1
+#if PICODEXED_OVERCLOCK==1
   set_sys_clock_khz(250000, false);
 #endif
 
   stdio_init_all();
   fprintf(stderr,"PicoDexed %s ...\n", PICODEXED_VERSION);
   fprintf(stderr,"\nConfiguration:\n");
-  fprintf(stderr,"  Sample Rate:  %d\n", DEXED_SAMPLE_RATE);
-  fprintf(stderr,"  Polyphony:    %d\n", DEXED_POLYPHONY);
-#if DEXED_OVERCLOCK==1
+  fprintf(stderr,"  Sample Rate:  %d\n", PICODEXED_SAMPLE_RATE);
+  fprintf(stderr,"  Polyphony:    %d\n", PICODEXED_POLYPHONY);
+#if PICODEXED_OVERCLOCK==1
   fprintf(stderr,"  Overclocking: On\n");
 #else
   fprintf(stderr,"  Overclocking: Off\n");

@@ -36,7 +36,7 @@ uint8_t sDefaultVoice[156] =    // Brass 1
 
 CPicoDexed::CPicoDexed ()
 :
-    m_Dexed(DEXED_POLYPHONY,DEXED_SAMPLE_RATE),
+    m_Dexed(PICODEXED_POLYPHONY,PICODEXED_SAMPLE_RATE),
     m_SoundOutput (),
     m_USBMIDI (this),
     m_SerialMIDI (this)
@@ -60,7 +60,7 @@ bool CPicoDexed::Init (void)
     m_nCurrentVoice = 0;
     ProgramChange(m_nCurrentVoice);
 
-    m_SoundOutput.Init (DEXED_SAMPLE_RATE);
+    m_SoundOutput.Init (PICODEXED_SAMPLE_RATE);
     m_USBMIDI.Init ();
     m_SerialMIDI.Init ();
     

@@ -1,7 +1,7 @@
 #ifndef _config_h
 #define _config_h
 
-#define PICODEXED_VERSION "v0.01xx"
+#define PICODEXED_VERSION "v0.02xx"
 
 #define MIDI_CHANNEL 1
 #define MIDI_SYSEX_DEVICE_ID 0  // Yamaha SysEx Device Number maps onto 0..F..
@@ -17,9 +17,9 @@
 //
 // At present, overclocking messes with PWM.
 //
-#define DEXED_SAMPLE_RATE    24000
-#define DEXED_POLYPHONY      16
-#define DEXED_OVERCLOCK      1
+#define PICODEXED_SAMPLE_RATE    24000
+#define PICODEXED_POLYPHONY      16
+#define PICODEXED_OVERCLOCK      1
 
 #define AUDIO_PWM       1
 #define AUDIO_I2S       2
