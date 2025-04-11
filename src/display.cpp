@@ -52,6 +52,16 @@ void CDisplay::Print (std::string sString)
     }
 }
 
+void CDisplay::PrintDual (std::string sString1, std::string sString2)
+{
+    if (!sString1.empty() && !sString2.empty())
+    {
+        ssd1306_clear(&disp);
+        ssd1306_draw_string(&disp, 0, 0, 2, sString1.c_str());
+        ssd1306_draw_string(&disp, 0, 16, 2, sString2.c_str());
+    }
+}
+
 void CDisplay::Update (void)
 {
     ssd1306_show(&disp);

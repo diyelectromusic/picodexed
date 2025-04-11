@@ -9,6 +9,7 @@
 #include "usbmidi.h"
 #include "serialmidi.h"
 #include "display.h"
+#include "encoder.h"
 
 #define VOICE_SIZE 156
 
@@ -75,13 +76,16 @@ private:
     CUSBMIDIDevice     m_USBMIDI;
     CSerialMIDIDevice  m_SerialMIDI;
     CDisplay           m_Display;
+    CRotaryEncoder     m_Encoder;
 
     uint8_t m_voice[VOICE_SIZE];
     unsigned m_nBanks;
     unsigned m_nCurrentVoice;
     unsigned m_nCurrentBank;
+    unsigned m_nCurrentBankVoice;
     unsigned m_nVolume;
     bool m_bDisplayChanged;
+    int  m_nRotation;
 };
 
 #endif

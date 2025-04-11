@@ -11,6 +11,7 @@ public:
     bool Init (void);
     void Logo (void);
     void Print (std::string sString);
+    void PrintDual (std::string sString1, std::string sString2);
     void Update (void);
 
 private:

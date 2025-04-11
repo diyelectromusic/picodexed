@@ -21,6 +21,10 @@
 #define PICODEXED_POLYPHONY      16
 #define PICODEXED_OVERCLOCK      1
 
+// PIO Use:
+//   PIO 0 - audio (I2S or PWM)
+//   PIO 1 - rotary encoder
+
 #define AUDIO_PWM       1
 #define AUDIO_I2S       2
 
@@ -46,5 +50,9 @@
 #define DISPLAY_I2C_ADDR 0x3C
 #define DISPLAY_W 128
 #define DISPLAY_H 32
+
+#define ENCODER_A_PIN  6
+#define ENCODER_B_PIN  7 // Not actually used - code assumes it is ENCODER_A_PIN + 1
+#define ENCODER_SW_PIN 8 // Not used
 
 #endif

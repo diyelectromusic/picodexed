@@ -17,6 +17,7 @@ target_sources(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/usbtask.c
     ${CMAKE_CURRENT_LIST_DIR}/src/usb_descriptors.c
     ${CMAKE_CURRENT_LIST_DIR}/libs/ssd1306.c
+    ${CMAKE_CURRENT_LIST_DIR}/libs/encoder.cpp
 )
 
 add_subdirectory(synth_dexed)
@@ -29,9 +30,12 @@ target_include_directories(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/synth_dexed
 )
 
+# PIO libs build
+pico_generate_pio_header(picodexed ${CMAKE_CURRENT_LIST_DIR}/libs/pio_rotary_encoder.pio)
+
 # In addition to pico_stdlib required for common PicoSDK functionality, add dependency on tinyusb_device
 # for TinyUSB device support and tinyusb_board for the additional board support library used by the example
-target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib pico_multicore tinyusb_device tinyusb_board pico_audio_i2s pico_audio_pwm hardware_i2c)
+target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib pico_multicore tinyusb_device tinyusb_board pico_audio_i2s pico_audio_pwm hardware_i2c hardware_pio)
 
 target_compile_definitions(picodexed PRIVATE
     PICO_AUDIO_I2S_MONO_OUTPUT=1
