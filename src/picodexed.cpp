@@ -1,16 +1,21 @@
 #include "pico/multicore.h"
+#include "ssd1306.h"
 #include "picodexed.h"
 #include "pico_perf.h"
+#include "display.h"
 #define PROGMEM 
 #include "voices.h"
 
 #define NUM_BANKS 8
 #define NUM_VOICES 32
 #define VOICE_SYX_SIZE 128
+#define VOICE_SIZE 156
+#define VOICE_NAME_SIZE 10
+#define VOICE_NAME (VOICE_SIZE-VOICE_NAME_SIZE-1)
 
 CPicoDexed *m_pPicoDexed = 0;
 
-uint8_t sDefaultVoice[156] =    // Brass 1
+uint8_t sDefaultVoice[VOICE_SIZE] =    // Brass 1
 {
              49,  99,  28,  68,  98,  98,  91,   0, 
              39,  54,  50,   1,   1,   4,   0,   2, 
@@ -44,8 +49,16 @@ CPicoDexed::CPicoDexed ()
     m_pPicoDexed = this;
 };
 
+
 bool CPicoDexed::Init (void)
 {
+    m_Display.Init();
+    m_Display.Logo();
+    m_Display.Update();
+    sleep_ms(2000);
+
+    m_bDisplayChanged = false;
+
     InitControllers();
     m_nBanks = sizeof(progmem_bank) / (NUM_VOICES*VOICE_SYX_SIZE);
     if (m_nBanks != NUM_BANKS)
@@ -66,9 +79,13 @@ bool CPicoDexed::Init (void)
     
     m_SerialMIDI.SetChannel(MIDI_CHANNEL);
     m_USBMIDI.SetChannel(MIDI_CHANNEL);
-    
+
+    printf("Starting audio processing...");
+
     // Start the multicore application - all sound processing will happen in core 1.
     multicore_launch_core1(core1_entry);
+
+    m_Display.Update();
     
     return true;
 }
@@ -78,7 +95,24 @@ void CPicoDexed::Process (void)
     //timingOn(2);
     m_USBMIDI.Process ();
     m_SerialMIDI.Process ();
+
+    if (m_bDisplayChanged)
+    {
+        m_Display.Update();
+        m_bDisplayChanged = false;
+    }
     //timingOff(2);
+}
+
+void CPicoDexed::DisplayVoiceName()
+{
+    // Take voice name from current loaded voice parameters.
+    char sVoiceName[VOICE_NAME_SIZE+1];
+    memcpy(sVoiceName, &m_voice[VOICE_NAME], VOICE_NAME_SIZE);
+    sVoiceName[VOICE_NAME_SIZE] = 0;
+    m_Display.Print(sVoiceName);
+    printf("Setting voice: %s\n", sVoiceName);
+    m_bDisplayChanged = true;
 }
 
 void CPicoDexed::ProgramChange (uint8_t ucProgram)
@@ -107,6 +141,7 @@ void CPicoDexed::ProgramChange (uint8_t ucProgram)
         return;
     }
     m_nCurrentVoice = ucProgram;
+    DisplayVoiceName();
 }
 
 void CPicoDexed::BankSelectMSB (uint8_t ucMSB)

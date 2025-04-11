@@ -12,22 +12,26 @@ target_sources(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/picodexed.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/serialmidi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/sounddevice.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/display.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/usbmidi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/usbtask.c
     ${CMAKE_CURRENT_LIST_DIR}/src/usb_descriptors.c
+    ${CMAKE_CURRENT_LIST_DIR}/libs/ssd1306.c
 )
 
 add_subdirectory(synth_dexed)
 
 # Make sure TinyUSB can find tusb_config.h
-target_include_directories(picodexed PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src
+target_include_directories(picodexed PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/src
+    ${CMAKE_CURRENT_LIST_DIR}/libs
     ${CMAKE_CURRENT_LIST_DIR}/synth_dexed/Synth_Dexed/src
     ${CMAKE_CURRENT_LIST_DIR}/synth_dexed
 )
 
 # In addition to pico_stdlib required for common PicoSDK functionality, add dependency on tinyusb_device
 # for TinyUSB device support and tinyusb_board for the additional board support library used by the example
-target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib pico_multicore tinyusb_device tinyusb_board pico_audio_i2s pico_audio_pwm)
+target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib pico_multicore tinyusb_device tinyusb_board pico_audio_i2s pico_audio_pwm hardware_i2c)
 
 target_compile_definitions(picodexed PRIVATE
     PICO_AUDIO_I2S_MONO_OUTPUT=1

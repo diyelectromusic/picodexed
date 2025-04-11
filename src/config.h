@@ -1,7 +1,7 @@
 #ifndef _config_h
 #define _config_h
 
-#define PICODEXED_VERSION "v0.02xx"
+#define PICODEXED_VERSION "v0.03xx"
 
 #define MIDI_CHANNEL 1
 #define MIDI_SYSEX_DEVICE_ID 0  // Yamaha SysEx Device Number maps onto 0..F..
@@ -40,5 +40,11 @@
 
 #define DEBUG_UART_TX_PIN  0
 #define DEBUG_UART_RX_PIN  1
+
+#define DISPLAY_I2C_SDA  2
+#define DISPLAY_I2C_SCL  3
+#define DISPLAY_I2C_ADDR 0x3C
+#define DISPLAY_W 128
+#define DISPLAY_H 32
 
 #endif

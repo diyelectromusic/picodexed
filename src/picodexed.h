@@ -8,6 +8,7 @@
 #include "sounddevice.h"
 #include "usbmidi.h"
 #include "serialmidi.h"
+#include "display.h"
 
 #define VOICE_SIZE 156
 
@@ -66,18 +67,21 @@ private:
     void ProcessSound (void);
     static void SampleCallback (int16_t *pBuffer, size_t BufferSize);
     static void core1_entry (void);
+    void DisplayVoiceName(void);
 
 private:
-    CDexedAdapter        m_Dexed;
-    CSoundDevice        m_SoundOutput;
-    CUSBMIDIDevice        m_USBMIDI;
-    CSerialMIDIDevice    m_SerialMIDI;
+    CDexedAdapter      m_Dexed;
+    CSoundDevice       m_SoundOutput;
+    CUSBMIDIDevice     m_USBMIDI;
+    CSerialMIDIDevice  m_SerialMIDI;
+    CDisplay           m_Display;
 
     uint8_t m_voice[VOICE_SIZE];
     unsigned m_nBanks;
     unsigned m_nCurrentVoice;
     unsigned m_nCurrentBank;
     unsigned m_nVolume;
+    bool m_bDisplayChanged;
 };
 
 #endif
