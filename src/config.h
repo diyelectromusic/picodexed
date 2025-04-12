@@ -73,6 +73,7 @@
 #define DEBUG_UART_TX_PIN  0
 #define DEBUG_UART_RX_PIN  1
 
+#define DISPLAY_I2C_BUS  1  // Pico GPIO are on either I2C bus 0 or 1
 #define DISPLAY_I2C_SDA  2
 #define DISPLAY_I2C_SCL  3
 #define DISPLAY_I2C_ADDR 0x3C

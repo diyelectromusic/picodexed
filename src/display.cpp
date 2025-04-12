@@ -39,6 +39,12 @@ extern "C" {
 #include "font.h"
 }
 
+#if DISPLAY_I2C_BUS==1
+#define I2CBUS i2c1
+#else
+#define I2CBUS i2c0
+#endif
+
 static ssd1306_t disp;
 
 CDisplay::CDisplay (void)
@@ -51,14 +57,14 @@ CDisplay::~CDisplay (void)
 
 bool CDisplay::Init (void)
 {
-    i2c_init(i2c1, 400000);
+    i2c_init(I2CBUS, 400000);
     gpio_set_function(DISPLAY_I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(DISPLAY_I2C_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(DISPLAY_I2C_SDA);
     gpio_pull_up(DISPLAY_I2C_SCL);
     
     disp.external_vcc=false;
-    ssd1306_init(&disp, DISPLAY_W, DISPLAY_H, DISPLAY_I2C_ADDR, i2c1);
+    ssd1306_init(&disp, DISPLAY_W, DISPLAY_H, DISPLAY_I2C_ADDR, I2CBUS);
     ssd1306_clear(&disp);
     ssd1306_show(&disp);
     
