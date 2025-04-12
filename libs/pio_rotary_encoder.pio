@@ -1,4 +1,9 @@
-
+; Simple DIY Electronic Music Projects - picoDexed
+;    diyelectromusic.wordpress.com
+;
+; This code is from Pico Rotary Encoder library by GitJer.
+; https://github.com/GitJer/Some_RPI-Pico_stuff/tree/main/Rotary_encoder
+;
 .program pio_rotary_encoder
 .wrap_target
 .origin 0        ; The jump table has to start at 0

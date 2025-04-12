@@ -1,4 +1,9 @@
 /*
+// Simple DIY Electronic Music Projects - picoDexed
+//    diyelectromusic.wordpress.com
+//
+*/
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2019 Ha Thach (tinyusb.org)

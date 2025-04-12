@@ -65,6 +65,7 @@ Builds on knowledge, work and code from the following:
 * [MiniDexed](https://github.com/probonopd/MiniDexed) initial port and code by Rene Stange and Holger Wirtz based on an idea by probonopd as discussed here: https://github.com/rsta2/circle/issues/274.
 * Earle Philhower’s [Raspberry Pi Pico Arduino core for all RP2040 boards](https://github.com/earlephilhower/arduino-pico).
 * Chris Hockuba’s [Raspberry Pi Pico version of CMSIS 5](https://gitlab.com/khockuba/cmsis-pi-pico)
+* Francois Best's [Arduino MIDI Library](https://github.com/FortySevenEffects/arduino_midi_library)
 * David Schramm's [Pico SSD1306 code](https://github.com/daschr/pico-ssd1306)
 * GitJer's [Pico Rotary Encoder code](https://github.com/GitJer/Some_RPI-Pico_stuff/tree/main/Rotary_encoder)
 

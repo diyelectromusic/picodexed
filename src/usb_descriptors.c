@@ -1,3 +1,7 @@
+/*
+// Simple DIY Electronic Music Projects - picoDexed
+//    diyelectromusic.wordpress.com
+*/
 /* 
  * The MIT License (MIT)
  *

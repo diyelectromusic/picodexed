@@ -1,4 +1,8 @@
 /*
+// Simple DIY Electronic Music Projects - picoDexed
+//    diyelectromusic.wordpress.com
+*/
+/*
 MIT License
 
 Copyright (c) 2021 David Schramm
