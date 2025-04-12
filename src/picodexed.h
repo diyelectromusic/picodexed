@@ -82,7 +82,7 @@ private:
     unsigned m_nBanks;
     unsigned m_nCurrentVoice;
     unsigned m_nCurrentBank;
-    unsigned m_nCurrentBankVoice;
+    bool m_bBankSel;
     unsigned m_nVolume;
     bool m_bDisplayChanged;
     int  m_nRotation;

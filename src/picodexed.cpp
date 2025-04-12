@@ -72,7 +72,7 @@ bool CPicoDexed::Init (void)
     }
     m_nCurrentBank = 0;
     m_nCurrentVoice = 0;
-    m_nCurrentBankVoice = 0;
+    m_bBankSel = false;
     ProgramChange(m_nCurrentVoice);
 
     m_SoundOutput.Init (PICODEXED_SAMPLE_RATE);
@@ -109,7 +109,6 @@ void CPicoDexed::Process (void)
 
     int nNewRot = m_Encoder.GetRotation();
     if (nNewRot > m_nRotation) {
-        //printf("%d\t%d\n",nNewRot, m_nRotation);
         // Increasing
         int nNext = m_nCurrentBank*NUM_VOICES + m_nCurrentVoice + 1;
         if (nNext >= NUM_BANKS*NUM_VOICES) nNext = 0;
@@ -117,7 +116,6 @@ void CPicoDexed::Process (void)
         ProgramChange(nNext % NUM_VOICES);
     }
     else if (nNewRot < m_nRotation) {
-        //printf("%d\t%d\n",nNewRot, m_nRotation);
         // Decreasing
         int nNext = m_nCurrentBank*NUM_VOICES + m_nCurrentVoice - 1;
         if (nNext < 0) nNext = NUM_BANKS*NUM_VOICES - 1;
@@ -140,7 +138,7 @@ void CPicoDexed::DisplayVoiceName()
 
     char sNumbers[10];
     memset(sNumbers,0,10);
-    sprintf(sNumbers, "%2d:%2d", m_nCurrentBank, m_nCurrentVoice);
+    sprintf(sNumbers, "%d:%2d", m_nCurrentBank, m_nCurrentVoice);
 
     m_Display.PrintDual(sNumbers, sVoiceName);
     //printf("Setting voice: %d (%d) %s\n", m_nCurrentVoice, m_nCurrentBank, sVoiceName);
@@ -149,16 +147,24 @@ void CPicoDexed::DisplayVoiceName()
 
 void CPicoDexed::ProgramChange (uint8_t ucProgram)
 {
-    if (ucProgram < NUM_VOICES)
+    if (m_bBankSel)
     {
-        // Voice in current bank
-        m_Dexed.decodeVoice(m_voice, progmem_bank[m_nCurrentBank][ucProgram]);
-        m_Dexed.loadVoiceParameters(m_voice);
+        m_bBankSel = false;
+        if (ucProgram < NUM_VOICES)
+        {
+            // Voice in current bank
+            m_Dexed.decodeVoice(m_voice, progmem_bank[m_nCurrentBank][ucProgram]);
+            m_Dexed.loadVoiceParameters(m_voice);
+        }
+        else
+        {
+            // Out of range of what can be selected
+            return;
+        }
     }
-    else if (ucProgram < 128)
+    else
     {
-        // Voice is in another bank.
-        // NB: Always starts from zero - we can only select up to 128 voices this way
+        // This is a PC on its own so map onto first 0..127 voices
         int8_t ucBank = ucProgram / NUM_VOICES;
         ucProgram = ucProgram - ucBank*NUM_VOICES;
 
@@ -167,11 +173,6 @@ void CPicoDexed::ProgramChange (uint8_t ucProgram)
         m_Dexed.loadVoiceParameters(m_voice);
 
         m_nCurrentBank = ucBank;
-    }
-    else
-    {
-        // Out of range of what can be selected
-        return;
     }
     m_nCurrentVoice = ucProgram;
     DisplayVoiceName();
@@ -185,12 +186,11 @@ void CPicoDexed::BankSelectMSB (uint8_t ucMSB)
 
 void CPicoDexed::BankSelectLSB (uint8_t ucLSB)
 {
-    if (ucLSB < NUM_BANKS)
-    {
-        // Change bank.
-        // NB: Requires a ProgramChange too to select a new voice
-        m_nCurrentBank = ucLSB;
-    }
+    ucLSB = ucLSB % NUM_BANKS;
+    // Change bank.
+    // NB: Requires a ProgramChange too to select a new voice
+    m_nCurrentBank = ucLSB;
+    m_bBankSel = true;
 }
 
 void CPicoDexed::InitControllers (void)
