@@ -136,19 +136,31 @@ void CPicoDexed::Process (void)
     }
 
     int nNewRot = m_Encoder.GetRotation();
-    if (nNewRot > m_nRotation) {
+#if ENCODER_REV==1
+    if (nNewRot < m_nRotation)
+#else
+    if (nNewRot > m_nRotation)
+#endif
+    {
         // Increasing
         int nNext = m_nCurrentBank*NUM_VOICES + m_nCurrentVoice + 1;
         if (nNext >= NUM_BANKS*NUM_VOICES) nNext = 0;
         BankSelectLSB((nNext / NUM_VOICES) % NUM_BANKS);
         ProgramChange(nNext % NUM_VOICES);
+        sleep_ms(20);
     }
-    else if (nNewRot < m_nRotation) {
+#if ENCODER_REV==1
+    else if (nNewRot > m_nRotation)
+#else
+    else if (nNewRot < m_nRotation)
+#endif
+    {
         // Decreasing
         int nNext = m_nCurrentBank*NUM_VOICES + m_nCurrentVoice - 1;
         if (nNext < 0) nNext = NUM_BANKS*NUM_VOICES - 1;
         BankSelectLSB((nNext / NUM_VOICES) % NUM_BANKS);
         ProgramChange(nNext % NUM_VOICES);
+        sleep_ms(20);
     }
     else {
         // Ignore

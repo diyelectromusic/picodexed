@@ -81,7 +81,7 @@ void CRotaryEncoder::SetRotation(int _rotation)
 int CRotaryEncoder::GetRotation(void)
 {
     // Seem to get double interrupts per click...
-    return rotation / 2;
+    return rotation / 4;
 }
 
 void CRotaryEncoder::pio_irq_handler()

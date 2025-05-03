@@ -32,17 +32,22 @@
 #include "hardware/irq.h"
 #include "serialmidi.h"
 #include "pico_perf.h"
+#include "config.h"
 
 // Core principles for interrupt-driven serial reception taken from
 // https://github.com/raspberrypi/pico-examples/blob/master/uart/uart_advanced/uart_advanced.c
 
+#if MIDI_UART==1
 #define M_UART   uart1
+#else
+#define M_UART   uart0
+#endif
 #define M_BAUD   31250
 #define M_DATA   8
 #define M_STOP   1
 #define M_PARITY UART_PARITY_NONE
-#define M_TX_PIN 4
-#define M_RX_PIN 5
+#define M_TX_PIN MIDI_TX_PIN
+#define M_RX_PIN MIDI_RX_PIN
 
 // Helper routine to link the ISR to the class handler
 CSerialMIDIDevice *pSerialMIDIDevice;

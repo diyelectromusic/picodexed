@@ -29,7 +29,7 @@
 #ifndef _config_h
 #define _config_h
 
-#define PICODEXED_VERSION "v0.03xx"
+#define PICODEXED_VERSION "v0.03_ER"
 
 #define MIDI_CHANNEL 1
 #define MIDI_SYSEX_DEVICE_ID 0  // Yamaha SysEx Device Number maps onto 0..F..
@@ -61,19 +61,19 @@
 // PWM requires an output circuit, e.g. as described here:
 // https://embeddedcomputing.com/technology/open-source/development-kits/raspberry-pi-pico-pwm-audio-output-circuit
 //
-#define PWM_PIN         20
+#define PWM_PIN         10
 
-#define I2S_DATA_PIN    9
-#define I2S_BCLK_PIN    10
-#define I2S_LRCLK_PIN   11  // Implied by BCLK=10
+#define I2S_DATA_PIN    16
+#define I2S_BCLK_PIN    18
+#define I2S_LRCLK_PIN   19  // Implied by BCLK=18
 
-#define MIDI_UART       1
-#define MIDI_TX_PIN     4   // Not used at present
-#define MIDI_RX_PIN     5
+#define MIDI_UART       0
+#define MIDI_TX_PIN     0   // Not used at present
+#define MIDI_RX_PIN     1
 
-#define DEBUG_UART         0  // Provided here for info, but actually
-#define DEBUG_UART_TX_PIN  0  // has to be set in CMakeLists.txt
-#define DEBUG_UART_RX_PIN  1  // to be active...
+#define DEBUG_UART         1  // Provided here for info, but actually
+#define DEBUG_UART_TX_PIN  8  // has to be set in CMakeLists.txt
+#define DEBUG_UART_RX_PIN  9  // to be active...
 
 #define DISPLAY_I2C_BUS  1  // Pico GPIO are on either I2C bus 0 or 1
 #define DISPLAY_I2C_SDA  2
@@ -82,9 +82,9 @@
 #define DISPLAY_W 128
 #define DISPLAY_H 32
 
-#define ENCODER_A_PIN   6
-#define ENCODER_B_PIN   7 // Not actually used - code assumes it is ENCODER_A_PIN + 1
-#define ENCODER_SW_PIN  8 // Not used
-#define ENCODER_REV     0 // Reverse encoder sense (0 or 1)
+#define ENCODER_A_PIN  11
+#define ENCODER_B_PIN  12 // Not actually used - code assumes it is ENCODER_A_PIN + 1
+#define ENCODER_SW_PIN 10 // Not used
+#define ENCODER_REV     1 // Reverse encoder sense (0 or 1)
 
 #endif
