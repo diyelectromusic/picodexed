@@ -13,6 +13,7 @@ Kevin
 ## Basic Build Instructions
 
 1. Install the Pico SDK, toolchain and core libraries as per https://github.com/raspberrypi/pico-sdk.
+    * I used the "Manually Configure your Environment" instructions in Appendix C of the "Getting Started with the Raspberry Pi Pico" C/C++ guide ([here](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf))
 2. Clone this repository.
 3. Run the getsubmod.sh script to initialise Synth_Dexed.
 5. Apply the patches to Synth_Dexed that can be found in synth_dexed.
