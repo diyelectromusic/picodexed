@@ -71,3 +71,7 @@ Builds on knowledge, work and code from the following:
 * GitJer's [Pico Rotary Encoder code](https://github.com/GitJer/Some_RPI-Pico_stuff/tree/main/Rotary_encoder)
 
 As well as exmaples from the Raspberry Pi C/C++ SDK and the Piromoni C/C++ examples for their Pico Audio Pack.
+
+## Please Note
+
+There is no permission, direct or implied, for the contents of this repository to be used for the training of AI systems.
