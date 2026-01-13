@@ -1,9 +1,20 @@
 cmake_minimum_required(VERSION 3.13)
 include(pico_sdk_import.cmake)
 include(pico_extras_import.cmake)
-project(picodexed)
+project(picodexed C CXX ASM)
 pico_sdk_init()
 add_executable(picodexed)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+
+set(NOISE_NUGGET_SDK_DIR ../noise-nugget-c-sdk)
+include(${NOISE_NUGGET_SDK_DIR}/noise_nugget-config.cmake)
+
+noise_nugget_lib(
+  picodexed_nn
+  ""
+)
 
 target_sources(picodexed PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
@@ -35,13 +46,16 @@ pico_generate_pio_header(picodexed ${CMAKE_CURRENT_LIST_DIR}/libs/pio_rotary_enc
 
 # In addition to pico_stdlib required for common PicoSDK functionality, add dependency on tinyusb_device
 # for TinyUSB device support and tinyusb_board for the additional board support library used by the example
-target_link_libraries(picodexed PUBLIC synth_dexed pico_stdlib pico_multicore tinyusb_device tinyusb_board pico_audio_i2s pico_audio_pwm hardware_i2c hardware_pio)
+target_link_libraries(picodexed PUBLIC picodexed_nn synth_dexed pico_stdlib pico_multicore tinyusb_device tinyusb_board pico_audio_i2s pico_audio_pwm hardware_i2c hardware_pio)
 
 target_compile_definitions(picodexed PRIVATE
     PICO_AUDIO_I2S_MONO_OUTPUT=1
     PICO_AUDIO_I2S_MONO_INPUT=1
 	USE_AUDIO_I2S=1
     USE_AUDIO_PWM=1
+#    PICO_DEFAULT_UART=1
+#    PICO_DEFAULT_UART_TX_PIN=8
+#    PICO_DEFAULT_UART_RX_PIN=9
 )
 
 # Uncomment this line to enable fix for Errata RP2040-E5 (the fix requires use of GPIO 15)

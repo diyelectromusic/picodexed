@@ -33,6 +33,7 @@
 #include "arm_math.h"
 #include "picodexed.h"
 #include "pico_perf.h"
+#include "pgb1.h"
 
 #define POLYPHONY 8
 
@@ -64,7 +65,11 @@ int main(void) {
   
   ledFlash(2);
   sleep_ms(500);
-  
+
+  screen_init();
+  screen_print(0, 0, "Hello PGB-1!");
+  screen_update();
+
   picoDexed.Init();
 
   ledFlash(3);
