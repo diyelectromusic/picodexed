@@ -73,6 +73,8 @@ bool CSoundDevice::Init (uint32_t sample_rate)
     {
         return false;
     }
+#elif AUDIO_OUTPUT==AUDIO_NN
+#warning "Noise Nugget not coded up yet"
 #else
 #error "No Audio Configuration specified"
 #endif

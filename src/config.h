@@ -50,41 +50,43 @@
 #define PICODEXED_OVERCLOCK      1
 
 // PIO Use:
-//   PIO 0 - audio (I2S or PWM)
-//   PIO 1 - rotary encoder
+//   PIO 1 - Noise Nugget I2S audio
+//   PIO 0 - rotary encoder
 
 #define AUDIO_PWM       1
 #define AUDIO_I2S       2
+#define AUDIO_NN        3  // Noise Nugget SDK Audio
 
-#define AUDIO_OUTPUT    AUDIO_I2S
+#define AUDIO_OUTPUT    AUDIO_NN
 
 // PWM requires an output circuit, e.g. as described here:
 // https://embeddedcomputing.com/technology/open-source/development-kits/raspberry-pi-pico-pwm-audio-output-circuit
 //
 #define PWM_PIN         20
 
-#define I2S_DATA_PIN    9
-#define I2S_BCLK_PIN    10
-#define I2S_LRCLK_PIN   11  // Implied by BCLK=10
+#define I2S_DATA_PIN    1    // Managed by Noise Nugget Library
+#define I2S_BCLK_PIN    2
+#define I2S_LRCLK_PIN   3
 
-#define MIDI_UART       1
-#define MIDI_TX_PIN     4   // Not used at present
-#define MIDI_RX_PIN     5
+#define MIDI_UART       0
+#define MIDI_TX_PIN     12   // Not used at present
+#define MIDI_RX_PIN     13
 
-#define DEBUG_UART         0  // Provided here for info, but actually
-#define DEBUG_UART_TX_PIN  0  // has to be set in CMakeLists.txt
-#define DEBUG_UART_RX_PIN  1  // to be active...
+#define DEBUG_UART         1  // Provided here for info, but actually
+#define DEBUG_UART_TX_PIN  4  // has to be set in CMakeLists.txt
+#define DEBUG_UART_RX_PIN  5  // to be active...
 
-#define DISPLAY_I2C_BUS  1  // Pico GPIO are on either I2C bus 0 or 1
-#define DISPLAY_I2C_SDA  2
-#define DISPLAY_I2C_SCL  3
+#define DISPLAY_I2C_BUS  0  // Pico GPIO are on either I2C bus 0 or 1
+#define DISPLAY_I2C_SDA  8
+#define DISPLAY_I2C_SCL  9
 #define DISPLAY_I2C_ADDR 0x3C
 #define DISPLAY_W 128
 #define DISPLAY_H 32
 
-#define ENCODER_A_PIN   6
-#define ENCODER_B_PIN   7 // Not actually used - code assumes it is ENCODER_A_PIN + 1
-#define ENCODER_SW_PIN  8 // Not used
-#define ENCODER_REV     0 // Reverse encoder sense (0 or 1)
+#define ENCODER_PIO     0  // pio 0 or 1
+#define ENCODER_A_PIN   10
+#define ENCODER_B_PIN   11 // Not actually used - code assumes it is ENCODER_A_PIN + 1
+#define ENCODER_SW_PIN  12 // Not used
+#define ENCODER_REV     0  // Reverse encoder sense (0 or 1)
 
 #endif

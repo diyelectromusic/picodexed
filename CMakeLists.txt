@@ -52,10 +52,10 @@ target_compile_definitions(picodexed PRIVATE
     PICO_AUDIO_I2S_MONO_OUTPUT=1
     PICO_AUDIO_I2S_MONO_INPUT=1
 	USE_AUDIO_I2S=1
-    USE_AUDIO_PWM=1
-#    PICO_DEFAULT_UART=1
-#    PICO_DEFAULT_UART_TX_PIN=8
-#    PICO_DEFAULT_UART_RX_PIN=9
+    USE_AUDIO_PWM=0
+    PICO_DEFAULT_UART=1
+    PICO_DEFAULT_UART_TX_PIN=4
+    PICO_DEFAULT_UART_RX_PIN=5
 )
 
 # Uncomment this line to enable fix for Errata RP2040-E5 (the fix requires use of GPIO 15)

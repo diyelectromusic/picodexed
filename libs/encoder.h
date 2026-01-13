@@ -48,7 +48,7 @@ public:
 
     // rotary_encoder_A is the pin for the A of the rotary encoder.
     // The B of the rotary encoder has to be connected to the next GPIO.
-    bool Init(uint rotary_encoder_A, uint rotary_encoder_B_dummy);
+    bool Init(uint rotary_encoder_A, uint rotary_encoder_B_dummy, uint rotary_encoder_pio);
 
     // set the current rotation to a specific value
     void SetRotation(int _rotation);

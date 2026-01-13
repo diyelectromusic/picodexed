@@ -34,9 +34,14 @@ CRotaryEncoder::CRotaryEncoder(void)
 {
 }
 
-bool CRotaryEncoder::Init(uint rotary_encoder_A, uint rotary_encoder_B_dummy)
+bool CRotaryEncoder::Init(uint rotary_encoder_A, uint rotary_encoder_B_dummy, uint rotary_encoder_pio)
 {
-    PIO pio = pio1;
+    PIO pio;
+    if (rotary_encoder_pio == 1) {
+        pio = pio1;
+    } else {
+        pio = pio0;
+    }
     sm = pio_claim_unused_sm(pio, true);
     assert(sm != -1); // No free state machine...
 

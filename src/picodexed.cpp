@@ -110,7 +110,7 @@ bool CPicoDexed::Init (void)
     m_SerialMIDI.SetChannel(MIDI_CHANNEL);
     m_USBMIDI.SetChannel(MIDI_CHANNEL);
 
-    m_Encoder.Init(ENCODER_A_PIN, ENCODER_B_PIN);
+    m_Encoder.Init(ENCODER_A_PIN, ENCODER_B_PIN, ENCODER_PIO);
     m_nRotation = 0;
 
     printf("Starting audio processing...");
