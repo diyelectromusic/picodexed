@@ -40,43 +40,39 @@
 CPicoDexed picoDexed;
 
 int main(void) {
-  // Overclock the Pico to 250MHz instead of the default 133MHz.
-  // I have it on good authority (read, my Mastodon follows)
-  // that this is an ok thing to do.  So there.
+    // Overclock the Pico to 250MHz instead of the default 133MHz.
+    // I have it on good authority (read, my Mastodon follows)
+    // that this is an ok thing to do.  So there.
 #if PICODEXED_OVERCLOCK==1
-  set_sys_clock_khz(250000, false);
+    set_sys_clock_khz(250000, false);
 #endif
 
-  stdio_init_all();
-  fprintf(stderr,"PicoDexed %s ...\n", PICODEXED_VERSION);
-  fprintf(stderr,"\nConfiguration:\n");
-  fprintf(stderr,"  Sample Rate:  %d\n", PICODEXED_SAMPLE_RATE);
-  fprintf(stderr,"  Polyphony:    %d\n", PICODEXED_POLYPHONY);
+    stdio_init_all();
+    fprintf(stderr,"PicoDexed %s ...\n", PICODEXED_VERSION);
+    fprintf(stderr,"\nConfiguration:\n");
+    fprintf(stderr,"  Sample Rate:  %d\n", PICODEXED_SAMPLE_RATE);
+    fprintf(stderr,"  Polyphony:    %d\n", PICODEXED_POLYPHONY);
 #if PICODEXED_OVERCLOCK==1
-  fprintf(stderr,"  Overclocking: On\n");
+    fprintf(stderr,"  Overclocking: On\n");
 #else
-  fprintf(stderr,"  Overclocking: Off\n");
+    fprintf(stderr,"  Overclocking: Off\n");
 #endif
-  //gpio_debug_pins_init(); // For Pico Library timing pins
-  ledInit();
-  // Use GPIO 2-3 for timing signals for testing
-//  timingInit(2);
-//  timingInit(3);
-  
-  ledFlash(2);
-  sleep_ms(500);
+    //gpio_debug_pins_init(); // For Pico Library timing pins
+    ledInit();
+    // Use GPIO 2-3 for timing signals for testing
+//    timingInit(2);
+//    timingInit(3);
 
-  screen_init();
-  screen_print(0, 0, "Hello PGB-1!");
-  screen_update();
+    ledFlash(2);
+    sleep_ms(500);
 
-  picoDexed.Init();
+    picoDexed.Init();
 
-  ledFlash(3);
-  
-  while (1) {
-    picoDexed.Process();
-  }
-  
-  return 0;
+    ledFlash(3);
+
+    while (1) {
+        picoDexed.Process();
+    }
+
+    return 0;
 }

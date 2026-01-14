@@ -52,6 +52,7 @@ public:
     bool Update (buffer_callback cb);
 
 private:
+    bool InitNN (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool);
     bool InitI2S (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool);
     bool InitPWM (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool);
 

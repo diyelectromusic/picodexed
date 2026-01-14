@@ -28,10 +28,36 @@
 */
 #include "pico/audio_i2s.h"
 #include "pico/audio_pwm.h"
+#include "noise_nugget.h"
 #include "sounddevice.h"
 #include "config.h"
 
 #define SAMPLES_PER_BUFFER 256
+
+static buffer_callback nn_cb=nullptr;
+uint32_t nn_buffer[SAMPLES_PER_BUFFER];
+int16_t  nn_samples[SAMPLES_PER_BUFFER];
+
+static void NNUpdate_cb(uint32_t **buffer, uint32_t *stereo_point_count) {
+    if (nn_cb != nullptr) {
+        nn_cb(nn_samples, SAMPLES_PER_BUFFER);
+    }
+
+    for (int i=0; i<SAMPLES_PER_BUFFER; i++) {
+        // Copy Mono samples over to 32-bit stereo buffer.
+        // Need two copies, one for each of the L and R channels.
+        int16_t* stereo_point = (int16_t*)&(nn_buffer[i]);
+        if (nn_cb != nullptr) {
+            stereo_point[0] = nn_samples[i];
+            stereo_point[1] = nn_samples[i];
+        } else {
+            stereo_point[0] = 0;
+            stereo_point[1] = 0;
+        }
+    }
+    *buffer = nn_buffer;
+    *stereo_point_count = SAMPLES_PER_BUFFER;
+}
 
 CSoundDevice::CSoundDevice (void)
 :
@@ -74,12 +100,40 @@ bool CSoundDevice::Init (uint32_t sample_rate)
         return false;
     }
 #elif AUDIO_OUTPUT==AUDIO_NN
-#warning "Noise Nugget not coded up yet"
+    if (!InitNN (&audio_format, producer_pool))
+    {
+        return false;
+    }
 #else
 #error "No Audio Configuration specified"
 #endif
     pAudioPool = producer_pool;
     
+    return true;
+}
+
+bool CSoundDevice::InitNN (audio_format_t *pAudioFormat, audio_buffer_pool *pBufferPool)
+{
+    if (!nn_audio_init(PICODEXED_SAMPLE_RATE, NNUpdate_cb, NULL))
+    {
+        return false;
+    }
+
+    for (int i=0; i<SAMPLES_PER_BUFFER; i++) {
+        nn_samples[i] = 0;
+        nn_buffer[i] = 0;
+    }
+
+    // Sample callback function will be filled in on first call to Update from picoDexed
+    nn_cb = nullptr;
+
+    // Initialise the NN hardware
+    nn_set_hp_volume(0.7, 0.7);         // headphones
+    nn_enable_speakers(true, true, 0);  // speakers
+    nn_enable_line_out(true, true);     // line out
+    // set line out mix L->L, L->R, R->L, R->R volumes 0..10
+    nn_set_line_out_volume(10.0, 0.0, 0.0, 10.0);
+
     return true;
 }
 
@@ -150,6 +204,9 @@ bool CSoundDevice::InitPWM (audio_format_t *pAudioFormat, audio_buffer_pool *pBu
 }
 
 bool CSoundDevice::Update (buffer_callback cb) {
+#if AUDIO_OUTPUT==AUDIO_NN
+    nn_cb = cb;
+#else
     // Grab a free pool from the audio layers for the new sample buffer
     struct audio_buffer *buffer = take_audio_buffer(pAudioPool, true);
     int16_t *samples = (int16_t *) buffer->buffer->bytes;
@@ -160,6 +217,6 @@ bool CSoundDevice::Update (buffer_callback cb) {
     
     // And now return the filled buffer to the pool for processing
     give_audio_buffer(pAudioPool, buffer);
-    
+#endif    
     return true;
 }
